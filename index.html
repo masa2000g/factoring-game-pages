@@ -897,6 +897,125 @@
       animation: fadeInUp 0.4s ease;
     }
 
+    /* === Pair Finder: Expression Visualization === */
+    .pair-visual {
+      text-align: center;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      line-height: 1.8;
+      display: none;
+    }
+
+    .pair-visual.show { display: block; animation: fadeInUp 0.3s ease; }
+
+    .pair-visual .visual-expr {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .pair-visual .visual-factor {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .pair-visual .visual-highlight {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      padding: 1px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      margin: 0 2px;
+    }
+
+    .pair-visual .visual-label {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* === Same-pair special badge === */
+    .perfect-square-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #fdcb6e, #e17055);
+      color: #fff;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-top: 6px;
+      animation: popIn 0.5s ease;
+    }
+
+    /* === Tutorial step-by-step overlay on game === */
+    .pair-tutorial-step {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: #fff;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.6;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .pair-tutorial-step .tutorial-step-num {
+      display: inline-block;
+      background: rgba(255,255,255,0.3);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      line-height: 26px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .pair-tutorial-step .tutorial-action-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 20px;
+      background: #fff;
+      color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pair-tutorial-step .tutorial-action-btn:hover {
+      background: #f0f0f7;
+    }
+
+    /* === Duplicate number badge on buttons === */
+    .num-btn .dup-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--warning);
+      color: var(--text);
+      font-size: 0.55rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+
     /* === Success next action === */
     .success-next {
       display: flex;
@@ -985,7 +1104,7 @@
           <div class="icon">🔍</div>
           <div class="info">
             <h3>ペアファインダー</h3>
-            <p>数字を2つタップ！ かけ算とたし算が合うペアを探そう</p>
+            <p>x²+5x+6 → 2と3をタップ！ かけ算とたし算が合うペアで因数分解</p>
           </div>
         </div>
         <div class="mode-card" data-start="area">
@@ -1008,8 +1127,9 @@
     <!-- ===== Pair Finder Mode ===== -->
     <div id="pair-game" class="game-card hidden">
       <div id="pair-mode-intro" class="mode-intro hidden">
-        👆 数字を2つタップして、かけ算とたし算が合うペアを見つけよう
+        👆 (x+?)(x+?) の ? に入る数を見つけよう！<br>「かけて○、たして○」が合う2つの数をタップ
       </div>
+      <div id="pair-tutorial-area"></div>
       <div class="expression" id="pair-expr"></div>
       <div class="instruction" id="pair-instruction"></div>
       <div class="target-info">
@@ -1018,6 +1138,7 @@
       </div>
       <div class="pair-status" id="pair-status">数字を2つタップしよう 👆</div>
       <div class="number-grid" id="pair-grid"></div>
+      <div class="pair-visual" id="pair-visual"></div>
       <div class="result-display" id="pair-result"></div>
       <div class="feedback-area" id="pair-feedback"></div>
       <div class="btn-row">
@@ -1153,7 +1274,7 @@ const tutorialSteps = [
   },
   {
     title: '🔍 ペアファインダー',
-    body: '<b>数字を2つタップ</b>するだけ！<br>「かけて○、たして○」になるペアを見つけよう。',
+    body: '<b>x² + 5x + 6</b> を因数分解するには？<br>「かけて6、たして5」→ <b>2と3</b> を見つけてタップ！<br>→ <b>(x+2)(x+3)</b> が答え！',
     demo: 'pair',
   },
   {
@@ -1409,24 +1530,37 @@ function startMode(mode) {
 // ================================================================
 //  MODE 1: PAIR FINDER
 // ================================================================
+
+// Tutorial state for first problem
+let pairTutorialStep = 0; // 0=not in tutorial, 1..4=guided steps
+let pairTutorialLocked = false; // lock interactions during tutorial animations
+
 function newPairProblem() {
   clearAllHints();
+  $('pair-tutorial-area').innerHTML = '';
+  $('pair-visual').className = 'pair-visual';
+  $('pair-visual').innerHTML = '';
+
   let p, q;
-  // First problem is easier (small positive numbers)
-  if (state.isFirstProblem.pair) {
-    p = pick([2, 3]);
-    q = pick([4, 5]);
+  const isFirst = state.isFirstProblem.pair;
+
+  if (isFirst) {
+    // First problem: simple positive, easy to understand
+    p = 2; q = 3;
   } else {
+    // Allow same-number pairs (perfect squares) ~20% of the time
+    const allowSame = Math.random() < 0.2;
     do {
       p = randInt(-9, 9);
-      q = randInt(-9, 9);
+      q = allowSame ? p : randInt(-9, 9);
     } while (p === 0 || q === 0 || p * q === 0 || Math.abs(p * q) > 30);
   }
 
   const b = p + q;
   const c = p * q;
+  const isSamePair = p === q;
 
-  state.pair = { p, q, b, c, selected: [], solved: false };
+  state.pair = { p, q, b, c, selected: [], solved: false, isSamePair };
 
   $('pair-expr').textContent = formatPoly(1, b, c);
   $('pair-instruction').innerHTML = `<b>かけて ${c}</b>、<b>たして ${b}</b> になる2つの数を見つけよう`;
@@ -1440,61 +1574,153 @@ function newPairProblem() {
   $('pair-next-btn').classList.add('hidden');
   $('pair-reset-btn').classList.remove('hidden');
 
-  // Build number grid
-  const numbers = new Set([p, q]);
-  if (Math.abs(c) <= 20) {
-    for (let i = -9; i <= 9; i++) {
-      if (i !== 0) numbers.add(i);
-    }
+  // Build number grid — with duplicate support for same-pair
+  buildPairGrid(p, q, isSamePair);
+
+  // First problem: interactive guided tutorial
+  if (isFirst) {
+    pairTutorialStep = 1;
+    pairTutorialLocked = true;
+    showPairTutorialStep1();
+  } else {
+    pairTutorialStep = 0;
+    pairTutorialLocked = false;
   }
-  while (numbers.size < 15) {
-    numbers.add(randInt(-9, 9) || 1);
+}
+
+function buildPairGrid(p, q, isSamePair) {
+  // Start with answer numbers
+  const numList = isSamePair ? [p, p] : [p, q];
+
+  // Build distractor pool: -9..9 excluding 0 and answer values
+  const distractors = [];
+  for (let i = -9; i <= 9; i++) {
+    if (i !== 0 && i !== p && i !== q) distractors.push(i);
+  }
+  const shuffledDistractors = shuffle(distractors);
+
+  // Fill to 15
+  for (const d of shuffledDistractors) {
+    if (numList.length >= 15) break;
+    numList.push(d);
+  }
+  while (numList.length < 15) {
+    numList.push(randInt(1, 9));
   }
 
-  const numArr = shuffle([...numbers].filter(n => n !== 0).slice(0, 15));
-  if (!numArr.includes(p)) numArr[0] = p;
-  if (!numArr.includes(q)) numArr[1] = q;
-  const finalNums = shuffle(numArr);
+  const finalNums = shuffle(numList.slice(0, 15));
 
   const grid = $('pair-grid');
   grid.innerHTML = '';
-  finalNums.forEach(n => {
+
+  finalNums.forEach((n, i) => {
     const btn = document.createElement('button');
     btn.className = 'num-btn';
     btn.textContent = n;
     btn.dataset.value = n;
+    btn.dataset.uid = i; // unique even if same value
     btn.addEventListener('click', () => selectPairNumber(n, btn));
     grid.appendChild(btn);
   });
 
-  // Show hints for first problem
-  if (state.isFirstProblem.pair) {
-    addPulseHint('.num-btn', 800);
-    // Find and highlight the correct answer buttons
-    setTimeout(() => {
-      const buttons = grid.querySelectorAll('.num-btn');
-      let count = 0;
-      buttons.forEach(btn => {
-        const val = parseInt(btn.dataset.value);
-        if ((val === p || val === q) && count < 2) {
-          addTapHand(btn);
-          count++;
+  // Mark duplicate buttons for same-pair problems
+  if (isSamePair) {
+    const sameBtns = grid.querySelectorAll('.num-btn');
+    let dupCount = 0;
+    sameBtns.forEach(btn => {
+      if (parseInt(btn.dataset.value) === p) {
+        dupCount++;
+        if (dupCount <= 2) {
+          // Small visual indicator that this number appears twice
+          const badge = document.createElement('span');
+          badge.className = 'dup-badge';
+          badge.textContent = dupCount === 1 ? 'A' : 'B';
+          btn.appendChild(badge);
         }
-      });
-    }, 2000);
+      }
+    });
   }
 }
 
+// === Interactive Tutorial (1st problem) ===
+function showPairTutorialStep1() {
+  const { b, c, p, q } = state.pair;
+  const area = $('pair-tutorial-area');
+  area.innerHTML = `
+    <div class="pair-tutorial-step">
+      <span class="tutorial-step-num">1</span>
+      <b>クリア条件</b>：「かけて ${c}、たして ${b}」になる2つの数を見つけよう！<br>
+      <span style="font-size:0.8rem;opacity:0.9">
+        x² + ${b}x + ${c} = (x + <b>?</b>)(x + <b>?</b>) の <b>?</b> に入る数を探すゲームだよ
+      </span><br>
+      <button class="tutorial-action-btn" id="pair-tut-next1">わかった！ →</button>
+    </div>`;
+  document.getElementById('pair-tut-next1').addEventListener('click', () => {
+    pairTutorialStep = 2;
+    showPairTutorialStep2();
+  });
+}
+
+function showPairTutorialStep2() {
+  const { b, c, p, q } = state.pair;
+  const area = $('pair-tutorial-area');
+  area.innerHTML = `
+    <div class="pair-tutorial-step">
+      <span class="tutorial-step-num">2</span>
+      まず「<b>かけて ${c}</b>」になるペアを考えよう<br>
+      <span style="font-size:0.8rem;opacity:0.9">
+        ${c} = 1×${c}${c >= 4 ? `, ${p}×${q}` : ''} …<br>
+        この中で「<b>たして ${b}</b>」にもなるのは？
+      </span><br>
+      <button class="tutorial-action-btn" id="pair-tut-next2">${p} と ${q} だ！ →</button>
+    </div>`;
+  document.getElementById('pair-tut-next2').addEventListener('click', () => {
+    pairTutorialStep = 3;
+    showPairTutorialStep3();
+  });
+}
+
+function showPairTutorialStep3() {
+  const { p, q } = state.pair;
+  const area = $('pair-tutorial-area');
+  area.innerHTML = `
+    <div class="pair-tutorial-step">
+      <span class="tutorial-step-num">3</span>
+      下の数字ボタンから <b>${p}</b> と <b>${q}</b> をタップしよう！<br>
+      <span style="font-size:0.8rem;opacity:0.9">光っているボタンをタップ 👆</span>
+    </div>`;
+  pairTutorialLocked = false;
+
+  // Highlight answer buttons
+  const grid = $('pair-grid');
+  const buttons = grid.querySelectorAll('.num-btn');
+  let found = [];
+  buttons.forEach(btn => {
+    const val = parseInt(btn.dataset.value);
+    if (val === p && found.filter(f => f === p).length < 1) { addTapHand(btn); btn.classList.add('hint-pulse'); found.push(p); }
+    else if (val === q && found.filter(f => f === q).length < 1) { addTapHand(btn); btn.classList.add('hint-pulse'); found.push(q); }
+  });
+}
+
+function clearPairTutorial() {
+  $('pair-tutorial-area').innerHTML = '';
+  pairTutorialStep = 0;
+}
+
+// === Selection Logic ===
 function selectPairNumber(n, btn) {
   if (state.pair.solved) return;
+  if (pairTutorialLocked) return; // Block during tutorial animation
   clearAllHints();
 
   const sel = state.pair.selected;
 
+  // Deselect if already selected (by same button instance)
   if (btn.classList.contains('selected')) {
     btn.classList.remove('selected');
     state.pair.selected = sel.filter(s => s.btn !== btn);
     updatePairStatus();
+    updatePairVisual();
     return;
   }
 
@@ -1507,6 +1733,7 @@ function selectPairNumber(n, btn) {
     checkPairAnswer();
   } else {
     updatePairStatus();
+    updatePairVisual();
   }
 }
 
@@ -1519,8 +1746,49 @@ function updatePairStatus() {
   }
 }
 
+// Format a factor term for visual display: returns e.g. "x+3" or "x−2"
+function formatFactorInner(val) {
+  if (val >= 0) return 'x+' + val;
+  return 'x\u2212' + Math.abs(val);
+}
+
+// Show how selected numbers connect to the expression
+function updatePairVisual() {
+  const sel = state.pair.selected;
+  const vis = $('pair-visual');
+  if (sel.length === 0) {
+    vis.className = 'pair-visual';
+    vis.innerHTML = '';
+    return;
+  }
+  if (sel.length === 1) {
+    const v = sel[0].value;
+    vis.className = 'pair-visual show';
+    vis.innerHTML = `
+      <span class="visual-factor">(<span class="visual-highlight">${formatFactorInner(v)}</span>)(x + <b>?</b>)</span>
+      <span class="visual-label">もう1つ選ぶと因数分解が完成するよ</span>`;
+  }
+}
+
+function showPairVisualResult(v1, v2, isSame) {
+  const vis = $('pair-visual');
+  vis.className = 'pair-visual show';
+  const f1 = formatFactorInner(v1);
+  const f2 = formatFactorInner(v2);
+  if (isSame) {
+    vis.innerHTML = `
+      <span class="visual-factor">(<span class="visual-highlight">${f1}</span>)² = (${f1})(${f1})</span>
+      <span class="visual-label">同じ数のペア → 完全平方式！</span>
+      <div class="perfect-square-badge">✨ 完全平方式！ (${f1})²</div>`;
+  } else {
+    vis.innerHTML = `
+      <span class="visual-factor">(<span class="visual-highlight">${f1}</span>)(<span class="visual-highlight">${f2}</span>)</span>
+      <span class="visual-label">${v1} × ${v2} = ${v1*v2}（かけ算OK）、${v1} + ${v2} = ${v1+v2}（たし算OK）</span>`;
+  }
+}
+
 function checkPairAnswer() {
-  const { b, c, selected, p, q } = state.pair;
+  const { b, c, selected, p, q, isSamePair } = state.pair;
   const v1 = selected[0].value;
   const v2 = selected[1].value;
   const product = v1 * v2;
@@ -1544,6 +1812,18 @@ function checkPairAnswer() {
     state.isFirstProblem.pair = false;
     updateStats();
 
+    // Clear tutorial if active
+    if (pairTutorialStep > 0) {
+      $('pair-tutorial-area').innerHTML = `
+        <div class="pair-tutorial-step" style="background: linear-gradient(135deg, var(--success), #00b894);">
+          🎉 クリア！ これがペアファインダーだよ！<br>
+          <span style="font-size:0.8rem;opacity:0.9">
+            「かけて○、たして○」のペアを見つけると因数分解ができる
+          </span>
+        </div>`;
+      pairTutorialStep = 0;
+    }
+
     selected.forEach(s => {
       s.btn.classList.remove('selected');
       s.btn.classList.add('correct-anim');
@@ -1552,19 +1832,35 @@ function checkPairAnswer() {
       if (!b.classList.contains('correct-anim')) b.classList.add('disabled');
     });
 
-    $('pair-result').textContent = formatFactor(1, p) + formatFactor(1, q);
+    // Show visual result with expression breakdown
+    showPairVisualResult(p, q, isSamePair);
+
+    // Show factored form
+    if (isSamePair) {
+      $('pair-result').textContent = formatFactor(1, p) + '²';
+    } else {
+      $('pair-result').textContent = formatFactor(1, p) + formatFactor(1, q);
+    }
     $('pair-result').className = 'result-display show';
     $('pair-feedback').className = 'feedback-area correct';
-    $('pair-feedback').innerHTML = '🎉 正解！ ペアを見つけた！<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
+
+    let successMsg = '🎉 正解！ ペアを見つけた！';
+    if (isSamePair) {
+      successMsg = '🎉 正解！ 同じ数のペア → 完全平方式！';
+    }
+    $('pair-feedback').innerHTML = successMsg + '<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
     $('pair-next-btn').classList.remove('hidden');
     $('pair-reset-btn').classList.add('hidden');
 
-    // Pulse the next button
     setTimeout(() => {
       $('pair-next-btn').classList.add('hint-pulse');
     }, 800);
 
     showConfetti();
+    if (isSamePair) {
+      // Double confetti for perfect square
+      setTimeout(() => showConfetti(), 400);
+    }
     showStreakPopup();
   } else {
     state.total++;
@@ -1575,20 +1871,40 @@ function checkPairAnswer() {
 
     let reason = '';
     if (!productOk && !sumOk) {
-      reason = `❌ かけ算: ${v1}×${v2}=${product}（${c}が必要）<br>❌ たし算: ${v1}+${v2}=${sum}（${b}が必要）<br>💡 まず「かけて${c}」になるペアを探してみよう`;
+      reason = `❌ かけ算: ${v1} × ${v2} = ${product}（目標 ${c}）`
+        + `<br>❌ たし算: ${v1} + ${v2} = ${sum}（目標 ${b}）`
+        + `<br>💡 まず「かけて ${c}」になるペアを探してみよう`;
     } else if (!productOk) {
-      reason = `✅ たし算は合ってる！ でも ${v1}×${v2}=${product}（${c}が必要）<br>💡 かけて${c}になる組み合わせは？`;
+      reason = `✅ たし算は合ってる！（${v1} + ${v2} = ${b}）`
+        + `<br>❌ でも かけ算: ${v1} × ${v2} = ${product}（目標 ${c}）`
+        + `<br>💡 かけて ${c} になる組み合わせは？`;
     } else {
-      reason = `✅ かけ算は合ってる！ でも ${v1}+${v2}=${sum}（${b}が必要）<br>💡 ${c}の約数の中で、たして${b}になるペアは？`;
+      // Product matches but sum doesn't
+      const diff = Math.abs(sum - b);
+      let hint = `💡 ${c}の約数で、たして ${b} になるペアは？`;
+      if (isSamePair) {
+        hint = `💡 同じ数を2回使えるよ！ ${p}×${p}=${c}, ${p}+${p}=${b} を試してみて`;
+      }
+      reason = `✅ かけ算は合ってる！（${v1} × ${v2} = ${c}）`
+        + `<br>❌ でも たし算: ${v1} + ${v2} = ${sum}（目標 ${b}、${diff} ずれてる）`
+        + `<br>${hint}`;
     }
     $('pair-feedback').className = 'feedback-area wrong';
     $('pair-feedback').innerHTML = reason;
+
+    // Show visual feedback
+    const vis = $('pair-visual');
+    vis.className = 'pair-visual show';
+    vis.innerHTML = `
+      <span class="visual-factor" style="opacity:0.5">(<span class="visual-highlight" style="background:var(--danger)">${formatFactorInner(v1)}</span>)(<span class="visual-highlight" style="background:var(--danger)">${formatFactorInner(v2)}</span>)</span>
+      <span class="visual-label">この組み合わせだと ${formatPoly(1, sum, product)} になってしまう</span>`;
 
     setTimeout(() => {
       selected.forEach(s => {
         s.btn.classList.remove('selected', 'wrong-anim');
       });
       state.pair.selected = [];
+      // Don't clear visual on wrong — keep it visible as reference
     }, 800);
   }
 }
@@ -1599,6 +1915,8 @@ $('pair-reset-btn').addEventListener('click', () => {
   state.pair.selected = [];
   $('pair-status').innerHTML = '数字を2つタップしよう 👆';
   $('pair-feedback').className = 'feedback-area';
+  $('pair-visual').className = 'pair-visual';
+  $('pair-visual').innerHTML = '';
 });
 
 $('pair-next-btn').addEventListener('click', () => {
