@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>因数分解マスター - 中学生向け因数分解ゲーム</title>
+
+  <!-- OGP -->
+  <meta property="og:title" content="因数分解マスター">
+  <meta property="og:description" content="中学生向けの因数分解練習ゲーム。レベル別に因数分解の問題に挑戦して、数学力を鍛えよう！">
+  <meta property="og:type" content="website">
+  <meta name="description" content="中学生向けの因数分解練習ゲーム。共通因数、展開の逆、たすきがけなど、レベル別に因数分解をマスターしよう。">
+
+  <style>
+    :root {
+      --primary: #6c5ce7;
+      --primary-light: #a29bfe;
+      --success: #00b894;
+      --danger: #e17055;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #2d3436;
+      --text-light: #636e72;
+      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 24px 0 16px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    header p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 12px;
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-item .label {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    .stat-item .value {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .stat-item .value.streak { color: var(--danger); }
+
+    /* Level selector */
+    .level-selector {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .level-btn {
+      padding: 8px 16px;
+      border: 2px solid var(--primary-light);
+      border-radius: 20px;
+      background: var(--card);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .level-btn:hover, .level-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Game card */
+    .game-card {
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .level-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .question-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .question {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .hint-text {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 24px;
+      min-height: 1.2em;
+    }
+
+    .answer-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px 16px;
+      font-size: 1.1rem;
+      border: 2px solid #dfe6e9;
+      border-radius: 12px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    .answer-input:focus {
+      border-color: var(--primary);
+    }
+
+    .answer-input.correct {
+      border-color: var(--success);
+      background: #f0fff4;
+    }
+
+    .answer-input.wrong {
+      border-color: var(--danger);
+      background: #fff5f5;
+    }
+
+    .input-help {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #5b4cdb; }
+
+    .btn-secondary {
+      background: #dfe6e9;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover { background: #b2bec3; }
+
+    .btn-hint {
+      background: transparent;
+      color: var(--primary-light);
+      font-size: 0.85rem;
+      padding: 8px 16px;
+    }
+
+    .btn-hint:hover { color: var(--primary); }
+
+    /* Feedback */
+    .feedback {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .feedback.correct {
+      display: block;
+      background: #e6fff2;
+      color: #00875a;
+    }
+
+    .feedback.wrong {
+      display: block;
+      background: #ffe8e4;
+      color: #c0392b;
+    }
+
+    /* Start screen */
+    .start-screen {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .start-screen h2 {
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+
+    .start-screen p {
+      color: var(--text-light);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .level-desc {
+      text-align: left;
+      max-width: 400px;
+      margin: 0 auto 24px;
+    }
+
+    .level-desc li {
+      list-style: none;
+      padding: 8px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .level-desc li span {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .question { font-size: 1.4rem; }
+      .game-card { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>因数分解マスター</h1>
+      <p>中学生向け因数分解トレーニング</p>
+    </header>
+
+    <div id="stats" class="stats-bar" style="display:none;">
+      <div class="stat-item">
+        <div class="label">正解</div>
+        <div class="value" id="correct-count">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">問題数</div>
+        <div class="value" id="total-count">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">連続正解</div>
+        <div class="value streak" id="streak-count">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">正答率</div>
+        <div class="value" id="accuracy">--%</div>
+      </div>
+    </div>
+
+    <div id="level-bar" class="level-selector" style="display:none;">
+      <button class="level-btn active" data-level="1">Lv.1 共通因数</button>
+      <button class="level-btn" data-level="2">Lv.2 展開の逆</button>
+      <button class="level-btn" data-level="3">Lv.3 二乗公式</button>
+      <button class="level-btn" data-level="4">Lv.4 たすきがけ</button>
+      <button class="level-btn" data-level="5">Lv.5 ミックス</button>
+    </div>
+
+    <div id="start-screen" class="game-card start-screen">
+      <h2>因数分解にチャレンジ！</h2>
+      <p>多項式を因数分解する練習ゲームです。<br>レベルを選んで問題に挑戦しよう。</p>
+      <ul class="level-desc">
+        <li><span>Lv.1</span> — 共通因数でくくる（例: 2x² + 4x）</li>
+        <li><span>Lv.2</span> — 展開の逆（例: x² + 5x + 6）</li>
+        <li><span>Lv.3</span> — 二乗の公式（例: x² − 9）</li>
+        <li><span>Lv.4</span> — たすきがけ（例: 2x² + 7x + 3）</li>
+        <li><span>Lv.5</span> — 全レベルからランダム出題</li>
+      </ul>
+      <button class="btn btn-primary" id="start-btn">ゲームスタート</button>
+    </div>
+
+    <div id="game-area" class="game-card" style="display:none;">
+      <div class="level-badge" id="level-label">Lv.1</div>
+      <div class="question-label">この式を因数分解せよ</div>
+      <div class="question" id="question"></div>
+      <div class="hint-text" id="hint"></div>
+      <input type="text" class="answer-input" id="answer" placeholder="答えを入力" autocomplete="off" spellcheck="false">
+      <div class="input-help">例: 2x(x+2), (x+3)(x-2), (x+3)^2</div>
+      <div class="feedback" id="feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-hint" id="hint-btn">ヒント</button>
+        <button class="btn btn-primary" id="submit-btn">解答する</button>
+        <button class="btn btn-secondary" id="next-btn" style="display:none;">次の問題</button>
+      </div>
+    </div>
+
+    <footer>因数分解マスター — 中学数学の因数分解を楽しく学ぼう</footer>
+  </div>
+
+<script>
+// ===== Utility =====
+function randInt(a, b) {
+  return a + Math.floor(Math.random() * (b - a + 1));
+}
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// Format coefficient: 1 -> "", -1 -> "-", n -> "n"
+function coefStr(n, showOne) {
+  if (n === 1) return showOne ? "1" : "";
+  if (n === -1) return showOne ? "-1" : "-";
+  return String(n);
+}
+
+// Format term: coefficient * x^power
+function termStr(coef, varName, power) {
+  if (coef === 0) return "";
+  if (power === 0) return String(coef);
+  const c = coefStr(coef, false);
+  const v = power === 1 ? varName : varName + "²";
+  return c + v;
+}
+
+// Build polynomial string from [a, b, c] for ax² + bx + c
+function polyStr(a, b, c) {
+  let parts = [];
+  if (a !== 0) parts.push(termStr(a, "x", 2));
+  if (b !== 0) {
+    const t = termStr(Math.abs(b), "x", 1);
+    if (parts.length > 0) {
+      parts.push(b > 0 ? " + " + t : " − " + t);
+    } else {
+      parts.push(termStr(b, "x", 1));
+    }
+  }
+  if (c !== 0) {
+    if (parts.length > 0) {
+      parts.push(c > 0 ? " + " + c : " − " + Math.abs(c));
+    } else {
+      parts.push(String(c));
+    }
+  }
+  return parts.join("") || "0";
+}
+
+// ===== Problem Generators =====
+
+// Lv.1: Common factor  e.g., kx(ax + b)
+function genLevel1() {
+  const k = pick([2, 3, 4, 5]);
+  const a = pick([1, 2, 3]);
+  const b = pick([-5, -4, -3, -2, -1, 1, 2, 3, 4, 5]);
+  // Expression: k*a*x² + k*b*x
+  const expanded = polyStr(k * a, k * b, 0);
+  // Answers: kx(ax+b)
+  const innerSign = b > 0 ? "+" : "-";
+  const aStr = a === 1 ? "x" : a + "x";
+  const answers = [];
+  const inner = a === 1
+    ? `x${innerSign}${Math.abs(b)}`
+    : `${a}x${innerSign}${Math.abs(b)}`;
+  answers.push(`${k}x(${inner})`);
+  // Also accept with spaces
+  answers.push(`${k}x( ${inner} )`);
+  // Reversed order for commutative
+  const innerRev = a === 1
+    ? `${innerSign === "+" ? "" : "-"}${Math.abs(b)}+x`
+    : `${innerSign === "+" ? "" : "-"}${Math.abs(b)}+${a}x`;
+  if (b !== 0) answers.push(`${k}x(${innerRev})`);
+
+  return {
+    question: expanded,
+    answers,
+    hint: "共通因数をくくり出してみよう",
+    explanation: `${k}x(${inner})`
+  };
+}
+
+// Lv.2: (x+p)(x+q) where p+q=b, p*q=c
+function genLevel2() {
+  const p = randInt(-8, 8);
+  let q = randInt(-8, 8);
+  if (p === 0 && q === 0) q = randInt(1, 5);
+  const a = 1;
+  const b = p + q;
+  const c = p * q;
+  if (c === 0) return genLevel2(); // retry if trivial
+
+  const expanded = polyStr(a, b, c);
+  const answers = buildFactorAnswers(1, p, 1, q);
+
+  return {
+    question: expanded,
+    answers,
+    hint: `かけて${c}、たして${b}になる2つの数を探そう`,
+    explanation: answers[0]
+  };
+}
+
+// Lv.3: Difference of squares or perfect square
+function genLevel3() {
+  if (Math.random() < 0.5) {
+    // x² - n²
+    const n = randInt(1, 9);
+    const expanded = polyStr(1, 0, -(n * n));
+    const answers = buildFactorAnswers(1, n, 1, -n);
+    return {
+      question: expanded,
+      answers,
+      hint: "a² − b² = (a+b)(a−b) を使おう",
+      explanation: answers[0]
+    };
+  } else {
+    // (x+n)² or (x-n)²
+    const n = randInt(1, 7);
+    const sign = pick([1, -1]);
+    const p = sign * n;
+    const expanded = polyStr(1, 2 * p, p * p);
+    const answers = [];
+    const inner = p > 0 ? `x+${p}` : `x-${Math.abs(p)}`;
+    answers.push(`(${inner})^2`);
+    answers.push(`(${inner})²`);
+    // Also accept (x+p)(x+p)
+    answers.push(`(${inner})(${inner})`);
+    return {
+      question: expanded,
+      answers,
+      hint: "完全平方式 a² ± 2ab + b² = (a ± b)² を使おう",
+      explanation: `(${inner})²`
+    };
+  }
+}
+
+// Lv.4: ax²+bx+c with a≠1 (cross multiplication / たすきがけ)
+function genLevel4() {
+  const a1 = pick([2, 3]);
+  const a2 = pick([1, 2, 3]);
+  const b1 = randInt(-5, 5);
+  const b2 = randInt(-5, 5);
+  if (b1 === 0 || b2 === 0) return genLevel4();
+  const a = a1 * a2;
+  const b = a1 * b2 + a2 * b1;
+  const c = b1 * b2;
+  if (a === 1) return genLevel4();
+
+  const expanded = polyStr(a, b, c);
+  const answers = buildFactorAnswers(a1, b1, a2, b2);
+
+  return {
+    question: expanded,
+    answers,
+    hint: `たすきがけ：かけて${a}になる組と、かけて${c}になる組を探そう`,
+    explanation: answers[0]
+  };
+}
+
+// Build acceptable answer strings for (a1*x + b1)(a2*x + b2)
+function buildFactorAnswers(a1, b1, a2, b2) {
+  function fmtFactor(a, b) {
+    let s = "";
+    if (a === 1) s = "x";
+    else if (a === -1) s = "-x";
+    else s = a + "x";
+    if (b > 0) s += "+" + b;
+    else if (b < 0) s += "-" + Math.abs(b);
+    return s;
+  }
+  const f1 = fmtFactor(a1, b1);
+  const f2 = fmtFactor(a2, b2);
+  const answers = [];
+  answers.push(`(${f1})(${f2})`);
+  answers.push(`(${f2})(${f1})`); // order doesn't matter
+  return answers;
+}
+
+// ===== Normalize answer for comparison =====
+function normalize(s) {
+  return s.replace(/\s+/g, "")
+    .replace(/²/g, "^2")
+    .replace(/\*\*/g, "^")
+    .replace(/×/g, "*")
+    .toLowerCase();
+}
+
+function checkAnswer(userAns, correctAnswers) {
+  const u = normalize(userAns);
+  return correctAnswers.some(a => normalize(a) === u);
+}
+
+// ===== Game State =====
+const state = {
+  level: 1,
+  correct: 0,
+  total: 0,
+  streak: 0,
+  current: null,
+  answered: false
+};
+
+const generators = {
+  1: genLevel1,
+  2: genLevel2,
+  3: genLevel3,
+  4: genLevel4,
+  5: () => pick([genLevel1, genLevel2, genLevel3, genLevel4])()
+};
+
+// ===== DOM =====
+const $ = id => document.getElementById(id);
+
+function showGame() {
+  $("start-screen").style.display = "none";
+  $("game-area").style.display = "block";
+  $("stats").style.display = "flex";
+  $("level-bar").style.display = "flex";
+  nextProblem();
+}
+
+function nextProblem() {
+  state.current = generators[state.level]();
+  state.answered = false;
+  $("question").textContent = state.current.question;
+  $("level-label").textContent = `Lv.${state.level}`;
+  $("hint").textContent = "";
+  $("answer").value = "";
+  $("answer").className = "answer-input";
+  $("answer").disabled = false;
+  $("answer").focus();
+  $("feedback").className = "feedback";
+  $("feedback").textContent = "";
+  $("submit-btn").style.display = "";
+  $("next-btn").style.display = "none";
+  $("hint-btn").style.display = "";
+}
+
+function submitAnswer() {
+  if (state.answered) return;
+  const userAns = $("answer").value.trim();
+  if (!userAns) return;
+
+  state.answered = true;
+  state.total++;
+  const isCorrect = checkAnswer(userAns, state.current.answers);
+
+  if (isCorrect) {
+    state.correct++;
+    state.streak++;
+    $("answer").className = "answer-input correct";
+    $("feedback").className = "feedback correct";
+    $("feedback").textContent = state.streak >= 3
+      ? `正解！ 🔥 ${state.streak}連続正解！`
+      : "正解！";
+  } else {
+    state.streak = 0;
+    $("answer").className = "answer-input wrong";
+    $("feedback").className = "feedback wrong";
+    $("feedback").textContent = `不正解… 答え: ${state.current.explanation}`;
+  }
+
+  $("answer").disabled = true;
+  $("submit-btn").style.display = "none";
+  $("next-btn").style.display = "";
+  $("hint-btn").style.display = "none";
+  updateStats();
+}
+
+function updateStats() {
+  $("correct-count").textContent = state.correct;
+  $("total-count").textContent = state.total;
+  $("streak-count").textContent = state.streak;
+  $("accuracy").textContent = state.total > 0
+    ? Math.round(state.correct / state.total * 100) + "%"
+    : "--%";
+}
+
+function showHint() {
+  if (state.current) {
+    $("hint").textContent = state.current.hint;
+  }
+}
+
+// ===== Event Listeners =====
+$("start-btn").addEventListener("click", showGame);
+$("submit-btn").addEventListener("click", submitAnswer);
+$("next-btn").addEventListener("click", nextProblem);
+$("hint-btn").addEventListener("click", showHint);
+
+$("answer").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    if (state.answered) {
+      nextProblem();
+    } else {
+      submitAnswer();
+    }
+  }
+});
+
+document.querySelectorAll(".level-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".level-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.level = parseInt(btn.dataset.level);
+    nextProblem();
+  });
+});
+</script>
+</body>
+</html>
