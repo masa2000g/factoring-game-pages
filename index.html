@@ -2,26 +2,33 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>因数分解マスター - 中学生向け因数分解ゲーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>因数分解マスター - パズルで学ぶ因数分解</title>
 
   <!-- OGP -->
   <meta property="og:title" content="因数分解マスター">
-  <meta property="og:description" content="中学生向けの因数分解練習ゲーム。レベル別に因数分解の問題に挑戦して、数学力を鍛えよう！">
+  <meta property="og:description" content="パズルで因数分解を体感しよう！タイルを並べて、ペアを見つけて、共通因数をくくり出す。中学生向けの操作型パズルゲーム。">
   <meta property="og:type" content="website">
-  <meta name="description" content="中学生向けの因数分解練習ゲーム。共通因数、展開の逆、たすきがけなど、レベル別に因数分解をマスターしよう。">
+  <meta name="description" content="タイルを操作して因数分解を体感しよう！因数ペアファインダー、面積モデルパズル、共通因数バンドルの3つのモードで遊べる中学生向けパズルゲーム。">
 
   <style>
     :root {
       --primary: #6c5ce7;
       --primary-light: #a29bfe;
+      --primary-dark: #5b4cdb;
       --success: #00b894;
+      --success-light: #e6fff2;
       --danger: #e17055;
-      --bg: #f8f9fa;
+      --danger-light: #ffe8e4;
+      --warning: #fdcb6e;
+      --bg: #f0f0f7;
       --card: #ffffff;
       --text: #2d3436;
       --text-light: #636e72;
-      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow: 0 4px 20px rgba(108, 92, 231, 0.10);
+      --shadow-lg: 0 8px 32px rgba(108, 92, 231, 0.15);
+      --radius: 16px;
+      --radius-sm: 10px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,174 +38,500 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .container {
-      max-width: 640px;
+      max-width: 520px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 12px 16px;
     }
 
+    /* === Header === */
     header {
       text-align: center;
-      padding: 24px 0 16px;
+      padding: 16px 0 8px;
     }
 
     header h1 {
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       color: var(--primary);
-      margin-bottom: 4px;
+      letter-spacing: 0.02em;
     }
 
     header p {
       color: var(--text-light);
-      font-size: 0.9rem;
+      font-size: 0.8rem;
+      margin-top: 2px;
     }
 
+    /* === Stats Bar === */
     .stats-bar {
       display: flex;
       justify-content: center;
-      gap: 24px;
-      padding: 12px;
+      gap: 20px;
+      padding: 10px;
       background: var(--card);
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
       box-shadow: var(--shadow);
-      margin-bottom: 20px;
-      font-size: 0.95rem;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
     }
 
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-item .label {
-      font-size: 0.75rem;
-      color: var(--text-light);
-    }
-
-    .stat-item .value {
-      font-weight: 700;
-      font-size: 1.2rem;
-      color: var(--primary);
-    }
-
+    .stat-item { text-align: center; }
+    .stat-item .label { font-size: 0.65rem; color: var(--text-light); }
+    .stat-item .value { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
     .stat-item .value.streak { color: var(--danger); }
 
-    /* Level selector */
-    .level-selector {
+    /* === Mode Selector === */
+    .mode-tabs {
       display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .mode-tabs::-webkit-scrollbar { display: none; }
 
-    .level-btn {
-      padding: 8px 16px;
+    .mode-tab {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 8px;
       border: 2px solid var(--primary-light);
-      border-radius: 20px;
+      border-radius: var(--radius-sm);
       background: var(--card);
       color: var(--primary);
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.72rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s;
+      text-align: center;
+      white-space: nowrap;
     }
 
-    .level-btn:hover, .level-btn.active {
+    .mode-tab:hover, .mode-tab.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .mode-tab .mode-icon {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    /* === Card === */
+    .game-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 20px;
+      margin-bottom: 12px;
+    }
+
+    /* === Start Screen === */
+    .start-screen {
+      text-align: center;
+      padding: 28px 16px;
+    }
+
+    .start-screen h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .start-screen p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .mode-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .mode-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      border: 2px solid transparent;
+    }
+
+    .mode-card:hover, .mode-card:active {
+      border-color: var(--primary-light);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .mode-card .icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .mode-card .info h3 {
+      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 3px;
+    }
+
+    .mode-card .info p {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* === Shared Game Styles === */
+    .expression {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .instruction {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .target-info {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .target-badge {
+      padding: 6px 14px;
+      background: var(--bg);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* === Pair Finder Styles === */
+    .number-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      max-width: 340px;
+      margin: 0 auto 16px;
+    }
+
+    .num-btn {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border: 2px solid #e0e0e0;
+      border-radius: 50%;
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .num-btn:hover { border-color: var(--primary-light); }
+
+    .num-btn.selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    }
+
+    .num-btn.correct-anim {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+      animation: popIn 0.4s ease;
+    }
+
+    .num-btn.wrong-anim {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+      animation: shake 0.5s ease;
+    }
+
+    .num-btn.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .pair-status {
+      text-align: center;
+      padding: 10px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .pair-calc {
+      font-weight: 700;
+    }
+
+    .pair-calc.match { color: var(--success); }
+    .pair-calc.no-match { color: var(--danger); }
+
+    /* === Area Model Styles === */
+    .area-grid-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
+      grid-template-rows: auto 1fr 1fr;
+      gap: 3px;
+      width: fit-content;
+    }
+
+    .area-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      padding: 8px 12px;
+      min-width: 56px;
+      min-height: 40px;
+    }
+
+    .area-header.revealed {
+      animation: popIn 0.4s ease;
+    }
+
+    .area-corner {
+      width: 56px;
+      height: 40px;
+    }
+
+    .area-cell {
+      width: 100px;
+      height: 72px;
+      border: 2px dashed #d0d0d0;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: var(--bg);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .area-cell:hover { border-color: var(--primary-light); }
+
+    .area-cell.filled {
+      background: var(--primary-light);
+      color: #fff;
+      border-style: solid;
+      border-color: var(--primary);
+    }
+
+    .area-cell.fixed {
+      background: var(--primary);
+      color: #fff;
+      border-style: solid;
+      border-color: var(--primary-dark);
+      cursor: default;
+    }
+
+    .area-cell.correct-cell {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+      animation: popIn 0.4s ease;
+    }
+
+    .area-cell.wrong-cell {
+      animation: shake 0.5s ease;
+      border-color: var(--danger);
+    }
+
+    .tile-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .tile {
+      padding: 10px 18px;
+      background: var(--card);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+
+    .tile:hover { border-color: var(--primary-light); }
+
+    .tile.selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    }
+
+    .tile.used {
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* === Common Factor Styles === */
+    .terms-display {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .term-card {
+      padding: 12px 18px;
+      background: var(--bg);
+      border: 2px solid #d0d0d0;
+      border-radius: var(--radius-sm);
+      font-size: 1.15rem;
+      font-weight: 700;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .term-card .plus-sign {
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    .term-card.factored {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: #fff;
+      animation: popIn 0.4s ease;
+    }
+
+    .factor-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .factor-btn {
+      padding: 10px 20px;
+      background: var(--card);
+      border: 2px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+
+    .factor-btn:hover { border-color: var(--primary-light); }
+
+    .factor-btn.selected {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
     }
 
-    /* Game card */
-    .game-card {
-      background: var(--card);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      padding: 32px 24px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .level-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: var(--primary-light);
+    .factor-btn.correct-factor {
+      background: var(--success);
       color: #fff;
-      margin-bottom: 16px;
-    }
-
-    .question-label {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      margin-bottom: 8px;
-    }
-
-    .question {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      line-height: 1.4;
-      color: var(--text);
-    }
-
-    .hint-text {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      margin-bottom: 24px;
-      min-height: 1.2em;
-    }
-
-    .answer-input {
-      width: 100%;
-      max-width: 400px;
-      padding: 14px 16px;
-      font-size: 1.1rem;
-      border: 2px solid #dfe6e9;
-      border-radius: 12px;
-      text-align: center;
-      outline: none;
-      transition: border-color 0.2s;
-      font-family: inherit;
-    }
-
-    .answer-input:focus {
-      border-color: var(--primary);
-    }
-
-    .answer-input.correct {
       border-color: var(--success);
-      background: #f0fff4;
     }
 
-    .answer-input.wrong {
+    .factor-btn.wrong-factor {
+      background: var(--danger);
+      color: #fff;
       border-color: var(--danger);
-      background: #fff5f5;
+      animation: shake 0.5s ease;
     }
 
-    .input-help {
-      font-size: 0.75rem;
-      color: var(--text-light);
-      margin-top: 8px;
+    .factor-preview {
+      text-align: center;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
     }
 
+    .factor-preview.show { color: var(--primary); }
+
+    /* === Buttons === */
     .btn-row {
       display: flex;
       gap: 10px;
       justify-content: center;
-      margin-top: 20px;
+      margin-top: 16px;
     }
 
     .btn {
-      padding: 12px 28px;
+      padding: 12px 24px;
       border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -207,93 +540,150 @@
       background: var(--primary);
       color: #fff;
     }
-
-    .btn-primary:hover { background: #5b4cdb; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:disabled {
+      background: #b0b0b0;
+      cursor: default;
+    }
 
     .btn-secondary {
-      background: #dfe6e9;
+      background: #e8e8f0;
       color: var(--text);
     }
+    .btn-secondary:hover { background: #d0d0dd; }
 
-    .btn-secondary:hover { background: #b2bec3; }
-
-    .btn-hint {
+    .btn-back {
       background: transparent;
-      color: var(--primary-light);
+      color: var(--text-light);
       font-size: 0.85rem;
-      padding: 8px 16px;
+      padding: 8px 12px;
     }
+    .btn-back:hover { color: var(--primary); }
 
-    .btn-hint:hover { color: var(--primary); }
-
-    /* Feedback */
-    .feedback {
-      margin-top: 16px;
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 0.95rem;
+    /* === Feedback === */
+    .feedback-area {
+      text-align: center;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      font-size: 0.9rem;
       font-weight: 600;
       display: none;
     }
 
-    .feedback.correct {
+    .feedback-area.correct {
       display: block;
-      background: #e6fff2;
+      background: var(--success-light);
       color: #00875a;
     }
 
-    .feedback.wrong {
+    .feedback-area.wrong {
       display: block;
-      background: #ffe8e4;
+      background: var(--danger-light);
       color: #c0392b;
     }
 
-    /* Start screen */
-    .start-screen {
+    /* === Result Display === */
+    .result-display {
       text-align: center;
-      padding: 40px 20px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--success);
+      padding: 16px;
+      display: none;
     }
 
-    .start-screen h2 {
-      font-size: 1.3rem;
-      margin-bottom: 16px;
+    .result-display.show {
+      display: block;
+      animation: popIn 0.5s ease;
     }
 
-    .start-screen p {
-      color: var(--text-light);
-      margin-bottom: 24px;
-      line-height: 1.6;
+    /* === Celebration === */
+    .confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
     }
 
-    .level-desc {
-      text-align: left;
-      max-width: 400px;
-      margin: 0 auto 24px;
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confettiFall 1.2s ease-out forwards;
     }
 
-    .level-desc li {
-      list-style: none;
-      padding: 8px 0;
-      font-size: 0.9rem;
-      border-bottom: 1px solid #eee;
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
     }
 
-    .level-desc li span {
-      font-weight: 600;
-      color: var(--primary);
+    .streak-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--danger);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      pointer-events: none;
+      z-index: 999;
+      animation: streakPop 1s ease forwards;
     }
 
+    @keyframes streakPop {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      30% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+      60% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -60%) scale(0.8); opacity: 0; }
+    }
+
+    /* === Animations === */
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    @keyframes fadeInUp {
+      0% { transform: translateY(20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .fade-in-up { animation: fadeInUp 0.4s ease; }
+
+    /* === Footer === */
     footer {
       text-align: center;
-      padding: 16px;
-      font-size: 0.75rem;
+      padding: 12px;
+      font-size: 0.7rem;
       color: var(--text-light);
     }
 
-    /* Responsive */
-    @media (max-width: 480px) {
-      .question { font-size: 1.4rem; }
-      .game-card { padding: 24px 16px; }
+    /* === Hidden === */
+    .hidden { display: none !important; }
+
+    /* === Responsive === */
+    @media (max-width: 400px) {
+      .expression { font-size: 1.3rem; }
+      .area-cell { width: 80px; height: 60px; font-size: 0.95rem; }
+      .area-header { font-size: 0.85rem; padding: 6px 8px; min-width: 44px; }
+      .num-btn { font-size: 1rem; }
+      .tile { padding: 8px 14px; font-size: 0.9rem; }
+      .container { padding: 8px 10px; }
     }
   </style>
 </head>
@@ -301,10 +691,11 @@
   <div class="container">
     <header>
       <h1>因数分解マスター</h1>
-      <p>中学生向け因数分解トレーニング</p>
+      <p>パズルで学ぶ因数分解</p>
     </header>
 
-    <div id="stats" class="stats-bar" style="display:none;">
+    <!-- Stats -->
+    <div id="stats" class="stats-bar hidden">
       <div class="stat-item">
         <div class="label">正解</div>
         <div class="value" id="correct-count">0</div>
@@ -314,362 +705,900 @@
         <div class="value" id="total-count">0</div>
       </div>
       <div class="stat-item">
-        <div class="label">連続正解</div>
+        <div class="label">連続</div>
         <div class="value streak" id="streak-count">0</div>
       </div>
-      <div class="stat-item">
-        <div class="label">正答率</div>
-        <div class="value" id="accuracy">--%</div>
-      </div>
     </div>
 
-    <div id="level-bar" class="level-selector" style="display:none;">
-      <button class="level-btn active" data-level="1">Lv.1 共通因数</button>
-      <button class="level-btn" data-level="2">Lv.2 展開の逆</button>
-      <button class="level-btn" data-level="3">Lv.3 二乗公式</button>
-      <button class="level-btn" data-level="4">Lv.4 たすきがけ</button>
-      <button class="level-btn" data-level="5">Lv.5 ミックス</button>
+    <!-- Mode Tabs -->
+    <div id="mode-tabs" class="mode-tabs hidden">
+      <button class="mode-tab active" data-mode="pair">
+        <span class="mode-icon">🔍</span>ペアファインダー
+      </button>
+      <button class="mode-tab" data-mode="area">
+        <span class="mode-icon">🧩</span>面積パズル
+      </button>
+      <button class="mode-tab" data-mode="common">
+        <span class="mode-icon">🎯</span>共通因数バンドル
+      </button>
     </div>
 
+    <!-- ===== Start Screen ===== -->
     <div id="start-screen" class="game-card start-screen">
-      <h2>因数分解にチャレンジ！</h2>
-      <p>多項式を因数分解する練習ゲームです。<br>レベルを選んで問題に挑戦しよう。</p>
-      <ul class="level-desc">
-        <li><span>Lv.1</span> — 共通因数でくくる（例: 2x² + 4x）</li>
-        <li><span>Lv.2</span> — 展開の逆（例: x² + 5x + 6）</li>
-        <li><span>Lv.3</span> — 二乗の公式（例: x² − 9）</li>
-        <li><span>Lv.4</span> — たすきがけ（例: 2x² + 7x + 3）</li>
-        <li><span>Lv.5</span> — 全レベルからランダム出題</li>
-      </ul>
-      <button class="btn btn-primary" id="start-btn">ゲームスタート</button>
-    </div>
-
-    <div id="game-area" class="game-card" style="display:none;">
-      <div class="level-badge" id="level-label">Lv.1</div>
-      <div class="question-label">この式を因数分解せよ</div>
-      <div class="question" id="question"></div>
-      <div class="hint-text" id="hint"></div>
-      <input type="text" class="answer-input" id="answer" placeholder="答えを入力" autocomplete="off" spellcheck="false">
-      <div class="input-help">例: 2x(x+2), (x+3)(x-2), (x+3)^2</div>
-      <div class="feedback" id="feedback"></div>
-      <div class="btn-row">
-        <button class="btn btn-hint" id="hint-btn">ヒント</button>
-        <button class="btn btn-primary" id="submit-btn">解答する</button>
-        <button class="btn btn-secondary" id="next-btn" style="display:none;">次の問題</button>
+      <h2>パズルで因数分解を体感しよう！</h2>
+      <p>タイルを操作して、ペアを見つけて、<br>共通因数をくくり出す3つのモード</p>
+      <div class="mode-cards">
+        <div class="mode-card" data-start="pair">
+          <div class="icon">🔍</div>
+          <div class="info">
+            <h3>ペアファインダー</h3>
+            <p>かけて c、たして b になる数のペアを見つけよう。和と積の感覚が身につく！</p>
+          </div>
+        </div>
+        <div class="mode-card" data-start="area">
+          <div class="icon">🧩</div>
+          <div class="info">
+            <h3>面積パズル</h3>
+            <p>タイルを長方形に並べて因数分解を完成させよう。面積モデルが直感でわかる！</p>
+          </div>
+        </div>
+        <div class="mode-card" data-start="common">
+          <div class="icon">🎯</div>
+          <div class="info">
+            <h3>共通因数バンドル</h3>
+            <p>共通因数を選んでくくり出そう。共通因数の抽出がクセになる！</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <footer>因数分解マスター — 中学数学の因数分解を楽しく学ぼう</footer>
+    <!-- ===== Pair Finder Mode ===== -->
+    <div id="pair-game" class="game-card hidden">
+      <div class="expression" id="pair-expr"></div>
+      <div class="instruction" id="pair-instruction"></div>
+      <div class="target-info">
+        <div class="target-badge" id="pair-product">かけて ?</div>
+        <div class="target-badge" id="pair-sum">たして ?</div>
+      </div>
+      <div class="pair-status" id="pair-status">数字を2つ選ぼう</div>
+      <div class="number-grid" id="pair-grid"></div>
+      <div class="result-display" id="pair-result"></div>
+      <div class="feedback-area" id="pair-feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="pair-reset-btn">選び直す</button>
+        <button class="btn btn-primary hidden" id="pair-next-btn">次の問題</button>
+      </div>
+    </div>
+
+    <!-- ===== Area Model Mode ===== -->
+    <div id="area-game" class="game-card hidden">
+      <div class="expression" id="area-expr"></div>
+      <div class="instruction">タイルを選んでマスに置こう（タップで選択→マスに配置）</div>
+      <div class="area-grid-wrapper">
+        <div class="area-grid" id="area-grid"></div>
+      </div>
+      <div class="tile-bank" id="area-tiles"></div>
+      <div class="result-display" id="area-result"></div>
+      <div class="feedback-area" id="area-feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="area-reset-btn">やり直す</button>
+        <button class="btn btn-primary hidden" id="area-next-btn">次の問題</button>
+      </div>
+    </div>
+
+    <!-- ===== Common Factor Mode ===== -->
+    <div id="common-game" class="game-card hidden">
+      <div class="expression" id="common-expr"></div>
+      <div class="instruction">共通因数を選んでくくり出そう</div>
+      <div class="terms-display" id="common-terms"></div>
+      <div class="factor-options" id="common-factors"></div>
+      <div class="factor-preview" id="common-preview"></div>
+      <div class="result-display" id="common-result"></div>
+      <div class="feedback-area" id="common-feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary hidden" id="common-confirm-btn">これでくくる！</button>
+        <button class="btn btn-primary hidden" id="common-next-btn">次の問題</button>
+      </div>
+    </div>
+
+    <footer>因数分解マスター — パズルで因数分解を体感しよう</footer>
   </div>
 
+  <!-- Confetti container -->
+  <div class="confetti-container" id="confetti"></div>
+
 <script>
-// ===== Utility =====
-function randInt(a, b) {
-  return a + Math.floor(Math.random() * (b - a + 1));
+// ========== Utilities ==========
+const $ = id => document.getElementById(id);
+const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const shuffle = arr => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+// Format terms for display
+function formatTerm(coef, varPart) {
+  if (coef === 0) return '';
+  if (!varPart) return String(coef);
+  if (coef === 1) return varPart;
+  if (coef === -1) return '-' + varPart;
+  return coef + varPart;
 }
 
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// Format coefficient: 1 -> "", -1 -> "-", n -> "n"
-function coefStr(n, showOne) {
-  if (n === 1) return showOne ? "1" : "";
-  if (n === -1) return showOne ? "-1" : "-";
-  return String(n);
-}
-
-// Format term: coefficient * x^power
-function termStr(coef, varName, power) {
-  if (coef === 0) return "";
-  if (power === 0) return String(coef);
-  const c = coefStr(coef, false);
-  const v = power === 1 ? varName : varName + "²";
-  return c + v;
-}
-
-// Build polynomial string from [a, b, c] for ax² + bx + c
-function polyStr(a, b, c) {
-  let parts = [];
-  if (a !== 0) parts.push(termStr(a, "x", 2));
+function formatPoly(a, b, c) {
+  const parts = [];
+  if (a !== 0) parts.push(formatTerm(a, 'x\u00B2'));
   if (b !== 0) {
-    const t = termStr(Math.abs(b), "x", 1);
-    if (parts.length > 0) {
-      parts.push(b > 0 ? " + " + t : " − " + t);
-    } else {
-      parts.push(termStr(b, "x", 1));
-    }
+    const t = formatTerm(Math.abs(b), 'x');
+    if (parts.length > 0) parts.push(b > 0 ? ' + ' + t : ' \u2212 ' + t);
+    else parts.push(formatTerm(b, 'x'));
   }
   if (c !== 0) {
-    if (parts.length > 0) {
-      parts.push(c > 0 ? " + " + c : " − " + Math.abs(c));
-    } else {
-      parts.push(String(c));
-    }
+    if (parts.length > 0) parts.push(c > 0 ? ' + ' + c : ' \u2212 ' + Math.abs(c));
+    else parts.push(String(c));
   }
-  return parts.join("") || "0";
+  return parts.join('') || '0';
 }
 
-// ===== Problem Generators =====
-
-// Lv.1: Common factor  e.g., kx(ax + b)
-function genLevel1() {
-  const k = pick([2, 3, 4, 5]);
-  const a = pick([1, 2, 3]);
-  const b = pick([-5, -4, -3, -2, -1, 1, 2, 3, 4, 5]);
-  // Expression: k*a*x² + k*b*x
-  const expanded = polyStr(k * a, k * b, 0);
-  // Answers: kx(ax+b)
-  const innerSign = b > 0 ? "+" : "-";
-  const aStr = a === 1 ? "x" : a + "x";
-  const answers = [];
-  const inner = a === 1
-    ? `x${innerSign}${Math.abs(b)}`
-    : `${a}x${innerSign}${Math.abs(b)}`;
-  answers.push(`${k}x(${inner})`);
-  // Also accept with spaces
-  answers.push(`${k}x( ${inner} )`);
-  // Reversed order for commutative
-  const innerRev = a === 1
-    ? `${innerSign === "+" ? "" : "-"}${Math.abs(b)}+x`
-    : `${innerSign === "+" ? "" : "-"}${Math.abs(b)}+${a}x`;
-  if (b !== 0) answers.push(`${k}x(${innerRev})`);
-
-  return {
-    question: expanded,
-    answers,
-    hint: "共通因数をくくり出してみよう",
-    explanation: `${k}x(${inner})`
-  };
+function formatFactor(a, b) {
+  let s = '';
+  if (a === 1) s = 'x';
+  else if (a === -1) s = '-x';
+  else s = a + 'x';
+  if (b > 0) s += '+' + b;
+  else if (b < 0) s += '\u2212' + Math.abs(b);
+  return '(' + s + ')';
 }
 
-// Lv.2: (x+p)(x+q) where p+q=b, p*q=c
-function genLevel2() {
-  const p = randInt(-8, 8);
-  let q = randInt(-8, 8);
-  if (p === 0 && q === 0) q = randInt(1, 5);
-  const a = 1;
-  const b = p + q;
-  const c = p * q;
-  if (c === 0) return genLevel2(); // retry if trivial
-
-  const expanded = polyStr(a, b, c);
-  const answers = buildFactorAnswers(1, p, 1, q);
-
-  return {
-    question: expanded,
-    answers,
-    hint: `かけて${c}、たして${b}になる2つの数を探そう`,
-    explanation: answers[0]
-  };
-}
-
-// Lv.3: Difference of squares or perfect square
-function genLevel3() {
-  if (Math.random() < 0.5) {
-    // x² - n²
-    const n = randInt(1, 9);
-    const expanded = polyStr(1, 0, -(n * n));
-    const answers = buildFactorAnswers(1, n, 1, -n);
-    return {
-      question: expanded,
-      answers,
-      hint: "a² − b² = (a+b)(a−b) を使おう",
-      explanation: answers[0]
-    };
-  } else {
-    // (x+n)² or (x-n)²
-    const n = randInt(1, 7);
-    const sign = pick([1, -1]);
-    const p = sign * n;
-    const expanded = polyStr(1, 2 * p, p * p);
-    const answers = [];
-    const inner = p > 0 ? `x+${p}` : `x-${Math.abs(p)}`;
-    answers.push(`(${inner})^2`);
-    answers.push(`(${inner})²`);
-    // Also accept (x+p)(x+p)
-    answers.push(`(${inner})(${inner})`);
-    return {
-      question: expanded,
-      answers,
-      hint: "完全平方式 a² ± 2ab + b² = (a ± b)² を使おう",
-      explanation: `(${inner})²`
-    };
-  }
-}
-
-// Lv.4: ax²+bx+c with a≠1 (cross multiplication / たすきがけ)
-function genLevel4() {
-  const a1 = pick([2, 3]);
-  const a2 = pick([1, 2, 3]);
-  const b1 = randInt(-5, 5);
-  const b2 = randInt(-5, 5);
-  if (b1 === 0 || b2 === 0) return genLevel4();
-  const a = a1 * a2;
-  const b = a1 * b2 + a2 * b1;
-  const c = b1 * b2;
-  if (a === 1) return genLevel4();
-
-  const expanded = polyStr(a, b, c);
-  const answers = buildFactorAnswers(a1, b1, a2, b2);
-
-  return {
-    question: expanded,
-    answers,
-    hint: `たすきがけ：かけて${a}になる組と、かけて${c}になる組を探そう`,
-    explanation: answers[0]
-  };
-}
-
-// Build acceptable answer strings for (a1*x + b1)(a2*x + b2)
-function buildFactorAnswers(a1, b1, a2, b2) {
-  function fmtFactor(a, b) {
-    let s = "";
-    if (a === 1) s = "x";
-    else if (a === -1) s = "-x";
-    else s = a + "x";
-    if (b > 0) s += "+" + b;
-    else if (b < 0) s += "-" + Math.abs(b);
-    return s;
-  }
-  const f1 = fmtFactor(a1, b1);
-  const f2 = fmtFactor(a2, b2);
-  const answers = [];
-  answers.push(`(${f1})(${f2})`);
-  answers.push(`(${f2})(${f1})`); // order doesn't matter
-  return answers;
-}
-
-// ===== Normalize answer for comparison =====
-function normalize(s) {
-  return s.replace(/\s+/g, "")
-    .replace(/²/g, "^2")
-    .replace(/\*\*/g, "^")
-    .replace(/×/g, "*")
-    .toLowerCase();
-}
-
-function checkAnswer(userAns, correctAnswers) {
-  const u = normalize(userAns);
-  return correctAnswers.some(a => normalize(a) === u);
-}
-
-// ===== Game State =====
+// ========== Game State ==========
 const state = {
-  level: 1,
+  mode: null,
   correct: 0,
   total: 0,
   streak: 0,
-  current: null,
-  answered: false
+  // Pair finder
+  pair: { p: 0, q: 0, b: 0, c: 0, selected: [], solved: false },
+  // Area model
+  area: { p: 0, q: 0, cells: [null, null, null, null], selectedTile: null, solved: false, tiles: [] },
+  // Common factor
+  common: { k: 0, kVar: '', terms: [], innerTerms: [], selectedFactor: null, solved: false, factorOptions: [] }
 };
-
-const generators = {
-  1: genLevel1,
-  2: genLevel2,
-  3: genLevel3,
-  4: genLevel4,
-  5: () => pick([genLevel1, genLevel2, genLevel3, genLevel4])()
-};
-
-// ===== DOM =====
-const $ = id => document.getElementById(id);
-
-function showGame() {
-  $("start-screen").style.display = "none";
-  $("game-area").style.display = "block";
-  $("stats").style.display = "flex";
-  $("level-bar").style.display = "flex";
-  nextProblem();
-}
-
-function nextProblem() {
-  state.current = generators[state.level]();
-  state.answered = false;
-  $("question").textContent = state.current.question;
-  $("level-label").textContent = `Lv.${state.level}`;
-  $("hint").textContent = "";
-  $("answer").value = "";
-  $("answer").className = "answer-input";
-  $("answer").disabled = false;
-  $("answer").focus();
-  $("feedback").className = "feedback";
-  $("feedback").textContent = "";
-  $("submit-btn").style.display = "";
-  $("next-btn").style.display = "none";
-  $("hint-btn").style.display = "";
-}
-
-function submitAnswer() {
-  if (state.answered) return;
-  const userAns = $("answer").value.trim();
-  if (!userAns) return;
-
-  state.answered = true;
-  state.total++;
-  const isCorrect = checkAnswer(userAns, state.current.answers);
-
-  if (isCorrect) {
-    state.correct++;
-    state.streak++;
-    $("answer").className = "answer-input correct";
-    $("feedback").className = "feedback correct";
-    $("feedback").textContent = state.streak >= 3
-      ? `正解！ 🔥 ${state.streak}連続正解！`
-      : "正解！";
-  } else {
-    state.streak = 0;
-    $("answer").className = "answer-input wrong";
-    $("feedback").className = "feedback wrong";
-    $("feedback").textContent = `不正解… 答え: ${state.current.explanation}`;
-  }
-
-  $("answer").disabled = true;
-  $("submit-btn").style.display = "none";
-  $("next-btn").style.display = "";
-  $("hint-btn").style.display = "none";
-  updateStats();
-}
 
 function updateStats() {
-  $("correct-count").textContent = state.correct;
-  $("total-count").textContent = state.total;
-  $("streak-count").textContent = state.streak;
-  $("accuracy").textContent = state.total > 0
-    ? Math.round(state.correct / state.total * 100) + "%"
-    : "--%";
+  $('correct-count').textContent = state.correct;
+  $('total-count').textContent = state.total;
+  $('streak-count').textContent = state.streak;
 }
 
-function showHint() {
-  if (state.current) {
-    $("hint").textContent = state.current.hint;
+// ========== Celebrations ==========
+function showConfetti() {
+  const container = $('confetti');
+  const colors = ['#6c5ce7', '#a29bfe', '#00b894', '#fdcb6e', '#e17055', '#fd79a8', '#74b9ff'];
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.top = '-10px';
+    piece.style.background = pick(colors);
+    piece.style.animationDelay = Math.random() * 0.3 + 's';
+    piece.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    if (Math.random() > 0.5) piece.style.borderRadius = '50%';
+    container.appendChild(piece);
   }
+  setTimeout(() => { container.innerHTML = ''; }, 2000);
 }
 
-// ===== Event Listeners =====
-$("start-btn").addEventListener("click", showGame);
-$("submit-btn").addEventListener("click", submitAnswer);
-$("next-btn").addEventListener("click", nextProblem);
-$("hint-btn").addEventListener("click", showHint);
+function showStreakPopup() {
+  if (state.streak < 3) return;
+  const popup = document.createElement('div');
+  popup.className = 'streak-popup';
+  popup.textContent = `🔥 ${state.streak}連続！`;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 1200);
+}
 
-$("answer").addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    if (state.answered) {
-      nextProblem();
-    } else {
-      submitAnswer();
+// ========== Navigation ==========
+function showScreen(id) {
+  ['start-screen', 'pair-game', 'area-game', 'common-game'].forEach(s => {
+    $(s).classList.add('hidden');
+  });
+  $(id).classList.remove('hidden');
+  $(id).classList.add('fade-in-up');
+}
+
+function startMode(mode) {
+  state.mode = mode;
+  $('stats').classList.remove('hidden');
+  $('mode-tabs').classList.remove('hidden');
+  $('start-screen').classList.add('hidden');
+
+  document.querySelectorAll('.mode-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.mode === mode);
+  });
+
+  if (mode === 'pair') { showScreen('pair-game'); newPairProblem(); }
+  else if (mode === 'area') { showScreen('area-game'); newAreaProblem(); }
+  else if (mode === 'common') { showScreen('common-game'); newCommonProblem(); }
+}
+
+// ================================================================
+//  MODE 1: PAIR FINDER
+//  Find two numbers whose product = c and sum = b
+//  for x² + bx + c = (x+p)(x+q)
+// ================================================================
+function newPairProblem() {
+  let p, q;
+  do {
+    p = randInt(-9, 9);
+    q = randInt(-9, 9);
+  } while (p === 0 || q === 0 || p * q === 0 || Math.abs(p * q) > 30);
+
+  const b = p + q;
+  const c = p * q;
+
+  state.pair = { p, q, b, c, selected: [], solved: false };
+
+  $('pair-expr').textContent = formatPoly(1, b, c);
+  $('pair-instruction').textContent = 'かけて ' + c + '、たして ' + b + ' になる2つの数を見つけよう';
+  $('pair-product').textContent = 'かけて ' + c;
+  $('pair-sum').textContent = 'たして ' + b;
+  $('pair-status').innerHTML = '数字を2つ選ぼう';
+  $('pair-result').className = 'result-display';
+  $('pair-result').textContent = '';
+  $('pair-feedback').className = 'feedback-area';
+  $('pair-feedback').textContent = '';
+  $('pair-next-btn').classList.add('hidden');
+  $('pair-reset-btn').classList.remove('hidden');
+
+  // Build number grid: include correct answers + distractors
+  const numbers = new Set([p, q]);
+  // Add some related distractors
+  if (Math.abs(c) <= 20) {
+    for (let i = -9; i <= 9; i++) {
+      if (i !== 0) numbers.add(i);
     }
   }
+  // Ensure we have a nice set of numbers
+  while (numbers.size < 15) {
+    numbers.add(randInt(-9, 9) || 1);
+  }
+
+  const numArr = shuffle([...numbers].filter(n => n !== 0).slice(0, 15));
+  // Make sure p and q are included
+  if (!numArr.includes(p)) numArr[0] = p;
+  if (!numArr.includes(q)) numArr[1] = q;
+  const finalNums = shuffle(numArr);
+
+  const grid = $('pair-grid');
+  grid.innerHTML = '';
+  finalNums.forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.textContent = n;
+    btn.dataset.value = n;
+    btn.addEventListener('click', () => selectPairNumber(n, btn));
+    grid.appendChild(btn);
+  });
+}
+
+function selectPairNumber(n, btn) {
+  if (state.pair.solved) return;
+
+  const sel = state.pair.selected;
+
+  // If already selected, deselect
+  if (btn.classList.contains('selected')) {
+    btn.classList.remove('selected');
+    state.pair.selected = sel.filter(s => s.btn !== btn);
+    updatePairStatus();
+    return;
+  }
+
+  if (sel.length >= 2) return;
+
+  btn.classList.add('selected');
+  sel.push({ value: n, btn });
+
+  if (sel.length === 2) {
+    checkPairAnswer();
+  } else {
+    updatePairStatus();
+  }
+}
+
+function updatePairStatus() {
+  const sel = state.pair.selected;
+  if (sel.length === 0) {
+    $('pair-status').innerHTML = '数字を2つ選ぼう';
+  } else if (sel.length === 1) {
+    $('pair-status').innerHTML = `<strong>${sel[0].value}</strong> を選択中… もう1つ選ぼう`;
+  }
+}
+
+function checkPairAnswer() {
+  const { b, c, selected } = state.pair;
+  const v1 = selected[0].value;
+  const v2 = selected[1].value;
+  const product = v1 * v2;
+  const sum = v1 + v2;
+
+  const productOk = product === c;
+  const sumOk = sum === b;
+
+  const productClass = productOk ? 'match' : 'no-match';
+  const sumClass = sumOk ? 'match' : 'no-match';
+
+  $('pair-status').innerHTML =
+    `<span class="pair-calc ${productClass}">${v1} × ${v2} = ${product}</span>` +
+    `<span class="pair-calc ${sumClass}">${v1} + ${v2} = ${sum}</span>`;
+
+  if (productOk && sumOk) {
+    // Correct!
+    state.pair.solved = true;
+    state.correct++;
+    state.total++;
+    state.streak++;
+    updateStats();
+
+    selected.forEach(s => {
+      s.btn.classList.remove('selected');
+      s.btn.classList.add('correct-anim');
+    });
+    document.querySelectorAll('.num-btn').forEach(b => {
+      if (!b.classList.contains('correct-anim')) b.classList.add('disabled');
+    });
+
+    const p = state.pair.p;
+    const q = state.pair.q;
+    $('pair-result').textContent = formatFactor(1, p) + formatFactor(1, q);
+    $('pair-result').className = 'result-display show';
+    $('pair-feedback').className = 'feedback-area correct';
+    $('pair-feedback').textContent = '正解！ ペアを見つけた！';
+    $('pair-next-btn').classList.remove('hidden');
+    $('pair-reset-btn').classList.add('hidden');
+
+    showConfetti();
+    showStreakPopup();
+  } else {
+    // Wrong
+    state.total++;
+    state.streak = 0;
+    updateStats();
+
+    selected.forEach(s => s.btn.classList.add('wrong-anim'));
+
+    let reason = '';
+    if (!productOk && !sumOk) {
+      reason = `${v1}×${v2}=${product}（${c}が必要）、${v1}+${v2}=${sum}（${b}が必要）`;
+    } else if (!productOk) {
+      reason = `たし算は合ってる！ でも ${v1}×${v2}=${product}（${c}が必要）`;
+    } else {
+      reason = `かけ算は合ってる！ でも ${v1}+${v2}=${sum}（${b}が必要）`;
+    }
+    $('pair-feedback').className = 'feedback-area wrong';
+    $('pair-feedback').textContent = reason;
+
+    setTimeout(() => {
+      selected.forEach(s => {
+        s.btn.classList.remove('selected', 'wrong-anim');
+      });
+      state.pair.selected = [];
+    }, 800);
+  }
+}
+
+$('pair-reset-btn').addEventListener('click', () => {
+  if (state.pair.solved) return;
+  state.pair.selected.forEach(s => s.btn.classList.remove('selected'));
+  state.pair.selected = [];
+  $('pair-status').innerHTML = '数字を2つ選ぼう';
+  $('pair-feedback').className = 'feedback-area';
 });
 
-document.querySelectorAll(".level-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".level-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    state.level = parseInt(btn.dataset.level);
-    nextProblem();
+$('pair-next-btn').addEventListener('click', newPairProblem);
+
+// ================================================================
+//  MODE 2: AREA MODEL PUZZLE
+//  Place tiles in a 2×2 grid to build (x+p)(x+q)
+//  Grid: x²  | px
+//        qx  | pq
+// ================================================================
+function newAreaProblem() {
+  let p, q;
+  do {
+    p = randInt(1, 7);
+    q = randInt(1, 7);
+  } while (p === q && Math.random() < 0.5); // allow some p=q but not always
+
+  // Randomly swap sign occasionally for variety
+  if (Math.random() < 0.3 && p + q <= 10) {
+    // Keep both positive for area model (easier to visualize)
+  }
+
+  const b = p + q;
+  const c = p * q;
+
+  state.area = {
+    p, q, cells: [null, null, null, null],
+    selectedTile: null, solved: false, tiles: []
+  };
+
+  $('area-expr').textContent = formatPoly(1, b, c);
+  $('area-result').className = 'result-display';
+  $('area-result').textContent = '';
+  $('area-feedback').className = 'feedback-area';
+  $('area-next-btn').classList.add('hidden');
+  $('area-reset-btn').classList.remove('hidden');
+
+  // Build grid
+  // Correct tiles: x², px, qx, pq
+  const correctTiles = [
+    { label: 'x\u00B2', value: 'x2' },
+    { label: formatTerm(p, 'x'), value: 'px', num: p },
+    { label: formatTerm(q, 'x'), value: 'qx', num: q },
+    { label: String(p * q), value: 'pq', num: p * q }
+  ];
+
+  // Distractors
+  const distractorValues = new Set();
+  distractorValues.add(p + q); // sum instead of product
+  distractorValues.add(p + 1);
+  distractorValues.add(q + 1);
+  if (p !== 1) distractorValues.add(p - 1);
+
+  const distractors = [];
+  // Add 2-3 distractor x-tiles and number tiles
+  const dNums = [...distractorValues].filter(d => d > 0 && d !== p && d !== q && d !== p * q);
+  if (dNums.length > 0) {
+    distractors.push({ label: formatTerm(dNums[0], 'x'), value: 'dx1', num: dNums[0] });
+  }
+  if (dNums.length > 1) {
+    distractors.push({ label: String(dNums[1]), value: 'dn1', num: dNums[1] });
+  }
+  // Always add at least one number distractor
+  let dConst = p * q + pick([-2, -1, 1, 2]);
+  if (dConst <= 0 || dConst === p * q) dConst = p * q + 3;
+  distractors.push({ label: String(dConst), value: 'dn2', num: dConst });
+
+  const allTiles = shuffle([...correctTiles, ...distractors]);
+  state.area.tiles = allTiles;
+  state.area.correctValues = ['x2', 'px', 'qx', 'pq'];
+
+  renderAreaGrid();
+  renderAreaTiles();
+}
+
+function renderAreaGrid() {
+  const { p, q, cells, solved } = state.area;
+  const grid = $('area-grid');
+  grid.innerHTML = '';
+
+  // Corner
+  const corner = document.createElement('div');
+  corner.className = 'area-corner';
+  grid.appendChild(corner);
+
+  // Column headers
+  const colH1 = document.createElement('div');
+  colH1.className = 'area-header' + (solved ? ' revealed' : '');
+  colH1.textContent = solved ? 'x' : '?';
+  grid.appendChild(colH1);
+
+  const colH2 = document.createElement('div');
+  colH2.className = 'area-header' + (solved ? ' revealed' : '');
+  colH2.textContent = solved ? String(p) : '?';
+  grid.appendChild(colH2);
+
+  // Row 1
+  const rowH1 = document.createElement('div');
+  rowH1.className = 'area-header' + (solved ? ' revealed' : '');
+  rowH1.textContent = solved ? 'x' : '?';
+  grid.appendChild(rowH1);
+
+  // Cell 0: x² (top-left)
+  const cell0 = createAreaCell(0);
+  grid.appendChild(cell0);
+
+  // Cell 1: px (top-right)
+  const cell1 = createAreaCell(1);
+  grid.appendChild(cell1);
+
+  // Row 2
+  const rowH2 = document.createElement('div');
+  rowH2.className = 'area-header' + (solved ? ' revealed' : '');
+  rowH2.textContent = solved ? String(q) : '?';
+  grid.appendChild(rowH2);
+
+  // Cell 2: qx (bottom-left)
+  const cell2 = createAreaCell(2);
+  grid.appendChild(cell2);
+
+  // Cell 3: pq (bottom-right)
+  const cell3 = createAreaCell(3);
+  grid.appendChild(cell3);
+}
+
+function createAreaCell(index) {
+  const cell = document.createElement('div');
+  const tileValue = state.area.cells[index];
+
+  if (state.area.solved) {
+    cell.className = 'area-cell correct-cell';
+    const correctLabels = ['x\u00B2', formatTerm(state.area.p, 'x'), formatTerm(state.area.q, 'x'), String(state.area.p * state.area.q)];
+    cell.textContent = correctLabels[index];
+  } else if (tileValue !== null) {
+    const tile = state.area.tiles.find(t => t.value === tileValue);
+    cell.className = 'area-cell filled';
+    cell.textContent = tile ? tile.label : '';
+    cell.addEventListener('click', () => removeFromCell(index));
+  } else {
+    cell.className = 'area-cell';
+    cell.textContent = '';
+    cell.addEventListener('click', () => placeInCell(index));
+  }
+
+  return cell;
+}
+
+function renderAreaTiles() {
+  const bank = $('area-tiles');
+  bank.innerHTML = '';
+  const usedValues = state.area.cells.filter(v => v !== null);
+
+  state.area.tiles.forEach(tile => {
+    const el = document.createElement('button');
+    el.className = 'tile';
+    if (usedValues.includes(tile.value)) {
+      el.classList.add('used');
+    }
+    if (state.area.selectedTile === tile.value) {
+      el.classList.add('selected');
+    }
+    el.textContent = tile.label;
+    el.addEventListener('click', () => selectAreaTile(tile.value));
+    bank.appendChild(el);
   });
+}
+
+function selectAreaTile(value) {
+  if (state.area.solved) return;
+  if (state.area.cells.includes(value)) return; // already used
+
+  if (state.area.selectedTile === value) {
+    state.area.selectedTile = null;
+  } else {
+    state.area.selectedTile = value;
+  }
+  renderAreaTiles();
+}
+
+function placeInCell(index) {
+  if (state.area.solved) return;
+  if (state.area.selectedTile === null) return;
+  if (state.area.cells[index] !== null) return;
+
+  state.area.cells[index] = state.area.selectedTile;
+  state.area.selectedTile = null;
+
+  renderAreaGrid();
+  renderAreaTiles();
+
+  // Check if all cells filled
+  if (state.area.cells.every(c => c !== null)) {
+    checkAreaAnswer();
+  }
+}
+
+function removeFromCell(index) {
+  if (state.area.solved) return;
+  state.area.cells[index] = null;
+  $('area-feedback').className = 'feedback-area';
+  renderAreaGrid();
+  renderAreaTiles();
+}
+
+function checkAreaAnswer() {
+  const { cells, p, q } = state.area;
+  // Correct arrangement: [x2, px, qx, pq] or [x2, qx, px, pq]
+  const isCorrect =
+    (cells[0] === 'x2' && cells[1] === 'px' && cells[2] === 'qx' && cells[3] === 'pq') ||
+    (cells[0] === 'x2' && cells[1] === 'qx' && cells[2] === 'px' && cells[3] === 'pq');
+
+  if (isCorrect) {
+    state.area.solved = true;
+    state.correct++;
+    state.total++;
+    state.streak++;
+    updateStats();
+
+    // Determine which arrangement was used for correct header display
+    if (cells[1] === 'qx') {
+      // Swap p and q for display
+      state.area.p = q;
+      state.area.q = p;
+    }
+
+    renderAreaGrid();
+    renderAreaTiles();
+
+    const dp = state.area.p;
+    const dq = state.area.q;
+    $('area-result').textContent = formatFactor(1, dp) + formatFactor(1, dq);
+    $('area-result').className = 'result-display show';
+    $('area-feedback').className = 'feedback-area correct';
+    $('area-feedback').textContent = '正解！ 長方形の辺が因数だ！';
+    $('area-next-btn').classList.remove('hidden');
+    $('area-reset-btn').classList.add('hidden');
+
+    showConfetti();
+    showStreakPopup();
+  } else {
+    state.total++;
+    state.streak = 0;
+    updateStats();
+
+    // Give specific feedback
+    let hint = '';
+    if (cells[0] !== 'x2') {
+      hint = '左上のマスには x\u00B2 が入るよ（面積の一番大きいパーツ）';
+    } else if (cells[3] === 'x2' || (cells[3] && cells[3].includes('x'))) {
+      hint = '右下は数字（定数）のタイルが入るよ';
+    } else {
+      hint = '真ん中の2マスにはxの項を置こう。かけて右下の数になる組み合わせを探して！';
+    }
+
+    $('area-feedback').className = 'feedback-area wrong';
+    $('area-feedback').textContent = hint;
+
+    // Shake cells
+    document.querySelectorAll('.area-cell.filled').forEach(c => {
+      c.classList.add('wrong-cell');
+      setTimeout(() => c.classList.remove('wrong-cell'), 600);
+    });
+  }
+}
+
+$('area-reset-btn').addEventListener('click', () => {
+  if (state.area.solved) return;
+  state.area.cells = [null, null, null, null];
+  state.area.selectedTile = null;
+  $('area-feedback').className = 'feedback-area';
+  renderAreaGrid();
+  renderAreaTiles();
 });
+
+$('area-next-btn').addEventListener('click', newAreaProblem);
+
+// ================================================================
+//  MODE 3: COMMON FACTOR BUNDLE
+//  Select the GCF to factor out from terms
+// ================================================================
+function newCommonProblem() {
+  // Generate: k * (ax + b) or k * x * (ax + b)
+  const type = pick(['number', 'withX']);
+  let k, a, b, terms, kLabel, innerTerms, expression;
+
+  if (type === 'number') {
+    k = pick([2, 3, 4, 5, 6]);
+    a = pick([1, 2, 3]);
+    b = pick([1, 2, 3, 4, 5].filter(x => gcd(x, a) === 1 || a === 1));
+    // k(ax + b) = kax + kb
+    terms = [
+      { coef: k * a, varPart: 'x', display: formatTerm(k * a, 'x') },
+      { coef: k * b, varPart: '', display: String(k * b) }
+    ];
+    kLabel = String(k);
+    innerTerms = [formatTerm(a, 'x'), String(b)];
+    expression = formatTerm(k * a, 'x') + (k * b > 0 ? ' + ' : ' \u2212 ') + Math.abs(k * b);
+  } else {
+    k = pick([2, 3, 4, 5]);
+    a = pick([1, 2, 3]);
+    b = pick([1, 2, 3, 4, 5]);
+    // kx(ax + b) = kax² + kbx
+    terms = [
+      { coef: k * a, varPart: 'x\u00B2', display: formatTerm(k * a, 'x\u00B2') },
+      { coef: k * b, varPart: 'x', display: formatTerm(k * b, 'x') }
+    ];
+    kLabel = k + 'x';
+    innerTerms = [formatTerm(a, 'x'), String(b)];
+    expression = formatTerm(k * a, 'x\u00B2') + ' + ' + formatTerm(k * b, 'x');
+  }
+
+  // Build factor options (correct + distractors)
+  const options = new Set();
+  options.add(kLabel);
+  // Add distractors
+  if (type === 'number') {
+    options.add(String(k + 1));
+    options.add(String(Math.max(1, k - 1)));
+    if (k !== 2) options.add('2');
+    options.add('x');
+    options.add(k + 'x');
+  } else {
+    options.add(String(k));
+    options.add('x');
+    options.add((k + 1) + 'x');
+    if (k !== 2) options.add('2x');
+    options.add(String(k * 2));
+  }
+
+  const factorOptions = shuffle([...options].slice(0, 6));
+
+  state.common = {
+    k, kLabel, type, terms, innerTerms, expression,
+    selectedFactor: null, solved: false, factorOptions,
+    answer: kLabel + '(' + innerTerms.join(' + ') + ')'
+  };
+
+  $('common-expr').textContent = expression;
+  $('common-result').className = 'result-display';
+  $('common-result').textContent = '';
+  $('common-feedback').className = 'feedback-area';
+  $('common-preview').textContent = '';
+  $('common-preview').className = 'factor-preview';
+  $('common-confirm-btn').classList.add('hidden');
+  $('common-next-btn').classList.add('hidden');
+
+  renderCommonTerms(false);
+  renderCommonFactors();
+}
+
+function gcd(a, b) {
+  a = Math.abs(a); b = Math.abs(b);
+  while (b) { [a, b] = [b, a % b]; }
+  return a;
+}
+
+function renderCommonTerms(factored) {
+  const container = $('common-terms');
+  container.innerHTML = '';
+
+  const terms = state.common.terms;
+  terms.forEach((term, i) => {
+    const card = document.createElement('div');
+    card.className = 'term-card' + (factored ? ' factored' : '');
+    card.textContent = factored ? state.common.innerTerms[i] : term.display;
+    if (i < terms.length - 1) {
+      const plus = document.createElement('span');
+      plus.className = 'plus-sign';
+      plus.textContent = '+';
+      card.appendChild(plus);
+    }
+    container.appendChild(card);
+  });
+}
+
+function renderCommonFactors() {
+  const container = $('common-factors');
+  container.innerHTML = '';
+
+  state.common.factorOptions.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'factor-btn';
+    if (state.common.selectedFactor === f) btn.classList.add('selected');
+    btn.textContent = f;
+    btn.addEventListener('click', () => selectFactor(f));
+    container.appendChild(btn);
+  });
+}
+
+function selectFactor(f) {
+  if (state.common.solved) return;
+  state.common.selectedFactor = f;
+  renderCommonFactors();
+
+  // Show preview
+  const { kLabel, innerTerms } = state.common;
+  $('common-preview').textContent = f + '( ? )';
+  $('common-preview').className = 'factor-preview show';
+  $('common-confirm-btn').classList.remove('hidden');
+}
+
+$('common-confirm-btn').addEventListener('click', () => {
+  const { selectedFactor, kLabel, innerTerms, terms, type, k } = state.common;
+  if (!selectedFactor || state.common.solved) return;
+
+  if (selectedFactor === kLabel) {
+    // Correct!
+    state.common.solved = true;
+    state.correct++;
+    state.total++;
+    state.streak++;
+    updateStats();
+
+    // Animate
+    document.querySelectorAll('.factor-btn').forEach(b => {
+      if (b.textContent === kLabel) {
+        b.classList.add('correct-factor');
+      }
+    });
+
+    renderCommonTerms(true);
+
+    const answer = kLabel + '(' + innerTerms.join(' + ') + ')';
+    $('common-result').textContent = answer;
+    $('common-result').className = 'result-display show';
+    $('common-preview').textContent = answer;
+    $('common-preview').className = 'factor-preview show';
+    $('common-feedback').className = 'feedback-area correct';
+    $('common-feedback').textContent = '正解！ 共通因数をくくり出せた！';
+    $('common-confirm-btn').classList.add('hidden');
+    $('common-next-btn').classList.remove('hidden');
+
+    showConfetti();
+    showStreakPopup();
+  } else {
+    // Wrong
+    state.total++;
+    state.streak = 0;
+    updateStats();
+
+    document.querySelectorAll('.factor-btn.selected').forEach(b => {
+      b.classList.remove('selected');
+      b.classList.add('wrong-factor');
+      setTimeout(() => b.classList.remove('wrong-factor'), 600);
+    });
+
+    // Explain why wrong
+    let reason = '';
+    const sf = selectedFactor;
+
+    // Check if the factor divides all terms
+    if (type === 'number') {
+      const c1 = terms[0].coef;
+      const c2 = terms[1].coef;
+      const fNum = parseInt(sf);
+      if (!isNaN(fNum)) {
+        if (c1 % fNum !== 0 || c2 % fNum !== 0) {
+          const bad = c1 % fNum !== 0 ? terms[0].display : terms[1].display;
+          reason = `${bad} は ${sf} で割り切れないよ`;
+        } else {
+          reason = `${sf} でくくれるけど、もっと大きい共通因数があるよ！`;
+        }
+      } else {
+        reason = `この式の項には x が含まれない項もあるから、x ではくくれないよ`;
+      }
+    } else {
+      if (sf === String(k)) {
+        reason = `${sf} でもくくれるけど、x も共通因数だよ！ ${kLabel} でくくろう`;
+      } else if (sf === 'x') {
+        reason = `x は共通因数だけど、係数にも共通因数 ${k} があるよ！`;
+      } else {
+        reason = `すべての項を ${sf} で割り切れるか確認してみよう`;
+      }
+    }
+
+    $('common-feedback').className = 'feedback-area wrong';
+    $('common-feedback').textContent = reason;
+
+    state.common.selectedFactor = null;
+    renderCommonFactors();
+    $('common-confirm-btn').classList.add('hidden');
+    $('common-preview').textContent = '';
+  }
+});
+
+$('common-next-btn').addEventListener('click', newCommonProblem);
+
+// ========== Event Listeners ==========
+
+// Start screen mode cards
+document.querySelectorAll('.mode-card').forEach(card => {
+  card.addEventListener('click', () => startMode(card.dataset.start));
+});
+
+// Mode tabs
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => startMode(tab.dataset.mode));
+});
+
 </script>
 </body>
 </html>
