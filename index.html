@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>因数分解マスター - パズルで学ぶ因数分解</title>
+  <title>因数分解マスター - ペアファインダー</title>
 
   <!-- OGP -->
   <meta property="og:title" content="因数分解マスター">
-  <meta property="og:description" content="パズルで因数分解を体感しよう！タイルを並べて、ペアを見つけて、共通因数をくくり出す。中学生向けの操作型パズルゲーム。">
+  <meta property="og:description" content="パズルで因数分解を体感しよう！かけ算とたし算が合うペアを見つけて因数分解。中学生向けの操作型パズルゲーム。">
   <meta property="og:type" content="website">
-  <meta name="description" content="タイルを操作して因数分解を体感しよう！因数ペアファインダー、面積モデルパズル、共通因数バンドルの3つのモードで遊べる中学生向けパズルゲーム。">
+  <meta name="description" content="かけ算とたし算が合うペアを見つけて因数分解！タップだけで遊べる中学生向けパズルゲーム。">
 
   <style>
     :root {
@@ -26,219 +26,141 @@
       --text: #2d3436;
       --text-light: #636e72;
       --shadow: 0 4px 20px rgba(108, 92, 231, 0.10);
-      --shadow-lg: 0 8px 32px rgba(108, 92, 231, 0.15);
       --radius: 16px;
       --radius-sm: 10px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
     }
 
     .container {
-      max-width: 520px;
+      max-width: 480px;
       margin: 0 auto;
-      padding: 12px 16px;
-    }
-
-    /* === Header === */
-    header {
-      text-align: center;
-      padding: 16px 0 8px;
-    }
-
-    header h1 {
-      font-size: 1.4rem;
-      color: var(--primary);
-      letter-spacing: 0.02em;
-    }
-
-    header p {
-      color: var(--text-light);
-      font-size: 0.8rem;
-      margin-top: 2px;
-    }
-
-    /* === Stats Bar === */
-    .stats-bar {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      padding: 10px;
-      background: var(--card);
-      border-radius: var(--radius-sm);
-      box-shadow: var(--shadow);
-      margin-bottom: 12px;
-      font-size: 0.85rem;
-    }
-
-    .stat-item { text-align: center; }
-    .stat-item .label { font-size: 0.65rem; color: var(--text-light); }
-    .stat-item .value { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
-    .stat-item .value.streak { color: var(--danger); }
-
-    /* === Mode Selector === */
-    .mode-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .mode-tabs::-webkit-scrollbar { display: none; }
-
-    .mode-tab {
-      flex: 1;
-      min-width: 0;
-      padding: 10px 8px;
-      border: 2px solid var(--primary-light);
-      border-radius: var(--radius-sm);
-      background: var(--card);
-      color: var(--primary);
-      font-size: 0.72rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.25s;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .mode-tab:hover, .mode-tab.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      box-shadow: var(--shadow);
-    }
-
-    .mode-tab .mode-icon {
-      display: block;
-      font-size: 1.4rem;
-      margin-bottom: 4px;
-    }
-
-    /* === Card === */
-    .game-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 24px 20px;
-      margin-bottom: 12px;
-    }
-
-    /* === Start Screen === */
-    .start-screen {
-      text-align: center;
-      padding: 28px 16px;
-    }
-
-    .start-screen h2 {
-      font-size: 1.3rem;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-
-    .start-screen p {
-      color: var(--text-light);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-
-    .mode-cards {
+      padding: 0 12px;
+      height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
     }
 
-    .mode-card {
+    /* === Header + Rule (compact) === */
+    .top-bar {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 16px;
-      background: var(--bg);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
-      border: 2px solid transparent;
-    }
-
-    .mode-card:hover, .mode-card:active {
-      border-color: var(--primary-light);
-      background: #fff;
-      box-shadow: var(--shadow);
-    }
-
-    .mode-card .icon {
-      font-size: 2rem;
+      justify-content: space-between;
+      padding: 8px 0 4px;
       flex-shrink: 0;
     }
 
-    .mode-card .info h3 {
-      font-size: 0.95rem;
+    .top-bar h1 {
+      font-size: 1rem;
       color: var(--primary);
-      margin-bottom: 3px;
     }
 
-    .mode-card .info p {
-      font-size: 0.78rem;
-      color: var(--text-light);
-      margin: 0;
-      line-height: 1.4;
-    }
-
-    /* === Shared Game Styles === */
-    .expression {
-      font-size: 1.6rem;
-      font-weight: 800;
-      text-align: center;
-      color: var(--text);
-      margin-bottom: 8px;
-      line-height: 1.4;
-    }
-
-    .instruction {
-      font-size: 0.82rem;
-      color: var(--text-light);
-      text-align: center;
-      margin-bottom: 16px;
-      line-height: 1.5;
-    }
-
-    .target-info {
+    .stats {
       display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: var(--text-light);
     }
 
-    .target-badge {
-      padding: 6px 14px;
-      background: var(--bg);
-      border-radius: 20px;
-      font-size: 0.85rem;
+    .stats .val {
       font-weight: 700;
       color: var(--primary);
     }
 
-    /* === Pair Finder Styles === */
+    .stats .streak .val {
+      color: var(--danger);
+    }
+
+    .rule-bar {
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+
+    /* === Game area (fills remaining space) === */
+    .game {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      min-height: 0;
+      padding: 4px 0;
+    }
+
+    /* Expression */
+    .expression {
+      font-size: 1.5rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    /* Targets */
+    .targets {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .target-badge {
+      padding: 4px 14px;
+      background: var(--card);
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    /* Status / calc display */
+    .status {
+      text-align: center;
+      padding: 6px;
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .pair-calc { font-weight: 700; }
+    .pair-calc.match { color: var(--success); }
+    .pair-calc.no-match { color: var(--danger); }
+
+    /* Number grid */
     .number-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      max-width: 340px;
-      margin: 0 auto 16px;
+      gap: 6px;
+      max-width: 300px;
+      margin: 0 auto;
+      width: 100%;
     }
 
     .num-btn {
@@ -246,18 +168,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 700;
       border: 2px solid #e0e0e0;
       border-radius: 50%;
       background: var(--card);
       color: var(--text);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
       position: relative;
     }
 
-    .num-btn:hover { border-color: var(--primary-light); }
+    .num-btn:active { transform: scale(0.95); }
 
     .num-btn.selected {
       background: var(--primary);
@@ -286,254 +208,75 @@
       pointer-events: none;
     }
 
-    .pair-status {
-      text-align: center;
-      padding: 10px;
-      background: var(--bg);
-      border-radius: var(--radius-sm);
-      margin-bottom: 12px;
-      font-size: 0.9rem;
-      min-height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-    }
-
-    .pair-calc {
-      font-weight: 700;
-    }
-
-    .pair-calc.match { color: var(--success); }
-    .pair-calc.no-match { color: var(--danger); }
-
-    /* === Area Model Styles === */
-    .area-grid-wrapper {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .area-grid {
-      display: grid;
-      grid-template-columns: auto 1fr 1fr;
-      grid-template-rows: auto 1fr 1fr;
-      gap: 3px;
-      width: fit-content;
-    }
-
-    .area-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--primary);
-      padding: 8px 12px;
-      min-width: 56px;
-      min-height: 40px;
-    }
-
-    .area-header.revealed {
-      animation: popIn 0.4s ease;
-    }
-
-    .area-corner {
-      width: 56px;
-      height: 40px;
-    }
-
-    .area-cell {
-      width: 100px;
-      height: 72px;
-      border: 2px dashed #d0d0d0;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      font-weight: 700;
-      background: var(--bg);
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-    }
-
-    .area-cell:hover { border-color: var(--primary-light); }
-
-    .area-cell.filled {
-      background: var(--primary-light);
-      color: #fff;
-      border-style: solid;
-      border-color: var(--primary);
-    }
-
-    .area-cell.fixed {
-      background: var(--primary);
-      color: #fff;
-      border-style: solid;
-      border-color: var(--primary-dark);
-      cursor: default;
-    }
-
-    .area-cell.correct-cell {
-      background: var(--success);
-      border-color: var(--success);
-      color: #fff;
-      animation: popIn 0.4s ease;
-    }
-
-    .area-cell.wrong-cell {
-      animation: shake 0.5s ease;
-      border-color: var(--danger);
-    }
-
-    .tile-bank {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-
-    .tile {
-      padding: 10px 18px;
-      background: var(--card);
-      border: 2px solid #e0e0e0;
-      border-radius: var(--radius-sm);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text);
-    }
-
-    .tile:hover { border-color: var(--primary-light); }
-
-    .tile.selected {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      transform: scale(1.08);
-      box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
-    }
-
-    .tile.used {
-      opacity: 0.25;
-      pointer-events: none;
-    }
-
-    /* === Common Factor Styles === */
-    .terms-display {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .term-card {
-      padding: 12px 18px;
-      background: var(--bg);
-      border: 2px solid #d0d0d0;
-      border-radius: var(--radius-sm);
-      font-size: 1.15rem;
-      font-weight: 700;
-      transition: all 0.3s;
-      position: relative;
-    }
-
-    .term-card .plus-sign {
+    /* Duplicate badge */
+    .num-btn .dup-badge {
       position: absolute;
-      right: -14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      color: var(--text-light);
-      font-weight: 400;
-    }
-
-    .term-card.factored {
-      background: var(--primary-light);
-      border-color: var(--primary);
-      color: #fff;
-      animation: popIn 0.4s ease;
-    }
-
-    .factor-options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .factor-btn {
-      padding: 10px 20px;
-      background: var(--card);
-      border: 2px solid #e0e0e0;
-      border-radius: var(--radius-sm);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
+      top: -3px;
+      right: -3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--warning);
       color: var(--text);
-    }
-
-    .factor-btn:hover { border-color: var(--primary-light); }
-
-    .factor-btn.selected {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    .factor-btn.correct-factor {
-      background: var(--success);
-      color: #fff;
-      border-color: var(--success);
-    }
-
-    .factor-btn.wrong-factor {
-      background: var(--danger);
-      color: #fff;
-      border-color: var(--danger);
-      animation: shake 0.5s ease;
-    }
-
-    .factor-preview {
-      text-align: center;
-      padding: 12px;
-      background: var(--bg);
-      border-radius: var(--radius-sm);
-      margin-bottom: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      min-height: 48px;
+      font-size: 0.5rem;
+      font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s;
+      z-index: 5;
     }
 
-    .factor-preview.show { color: var(--primary); }
+    /* Feedback */
+    .feedback {
+      text-align: center;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      line-height: 1.5;
+      min-height: 24px;
+    }
 
-    /* === Buttons === */
+    .feedback:empty { display: none; }
+
+    .feedback.correct {
+      background: var(--success-light);
+      color: #00875a;
+    }
+
+    .feedback.wrong {
+      background: var(--danger-light);
+      color: #c0392b;
+    }
+
+    /* Result (factored form) */
+    .result {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--success);
+      animation: popIn 0.4s ease;
+    }
+
+    .result:empty { display: none; }
+
+    /* Buttons */
     .btn-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       justify-content: center;
-      margin-top: 16px;
+      flex-shrink: 0;
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
     }
 
     .btn {
-      padding: 12px 24px;
+      padding: 12px 28px;
       border: none;
       border-radius: var(--radius-sm);
       font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
     .btn-primary {
@@ -541,10 +284,6 @@
       color: #fff;
     }
     .btn-primary:hover { background: var(--primary-dark); }
-    .btn-primary:disabled {
-      background: #b0b0b0;
-      cursor: default;
-    }
 
     .btn-secondary {
       background: #e8e8f0;
@@ -552,67 +291,40 @@
     }
     .btn-secondary:hover { background: #d0d0dd; }
 
-    .btn-back {
-      background: transparent;
-      color: var(--text-light);
-      font-size: 0.85rem;
-      padding: 8px 12px;
-    }
-    .btn-back:hover { color: var(--primary); }
-
-    /* === Feedback === */
-    .feedback-area {
-      text-align: center;
-      padding: 12px;
-      border-radius: var(--radius-sm);
-      margin-top: 12px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      display: none;
+    /* === Animations === */
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    .feedback-area.correct {
-      display: block;
-      background: var(--success-light);
-      color: #00875a;
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
     }
 
-    .feedback-area.wrong {
-      display: block;
-      background: var(--danger-light);
-      color: #c0392b;
+    @keyframes pulse-hint {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(108, 92, 231, 0); }
     }
 
-    /* === Result Display === */
-    .result-display {
-      text-align: center;
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--success);
-      padding: 16px;
-      display: none;
-    }
+    .hint-pulse { animation: pulse-hint 1.5s ease-in-out infinite; }
 
-    .result-display.show {
-      display: block;
-      animation: popIn 0.5s ease;
-    }
-
-    /* === Celebration === */
+    /* === Confetti === */
     .confetti-container {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
       z-index: 1000;
     }
 
     .confetti-piece {
       position: absolute;
-      width: 10px;
-      height: 10px;
+      width: 10px; height: 10px;
       border-radius: 2px;
       animation: confettiFall 1.2s ease-out forwards;
     }
@@ -624,8 +336,7 @@
 
     .streak-popup {
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%) scale(0);
       font-size: 2rem;
       font-weight: 900;
@@ -643,67 +354,26 @@
       100% { transform: translate(-50%, -60%) scale(0.8); opacity: 0; }
     }
 
-    /* === Animations === */
-    @keyframes popIn {
-      0% { transform: scale(0.6); opacity: 0; }
-      60% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-8px); }
-      40% { transform: translateX(8px); }
-      60% { transform: translateX(-5px); }
-      80% { transform: translateX(5px); }
-    }
-
-    @keyframes fadeInUp {
-      0% { transform: translateY(20px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-
-    .fade-in-up { animation: fadeInUp 0.4s ease; }
-
-    /* === Tutorial Overlay === */
+    /* === Tutorial overlay === */
     .tutorial-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.6);
       z-index: 2000;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
       padding: 20px;
-      opacity: 0;
-      animation: fadeIn 0.3s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      to { opacity: 1; }
     }
 
     .tutorial-card {
       background: #fff;
       border-radius: 20px;
       padding: 24px 20px;
-      max-width: 380px;
+      max-width: 340px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 -4px 30px rgba(0,0,0,0.2);
-      animation: slideUp 0.4s ease;
-      margin-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(40px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .tutorial-card .tutorial-step-indicator {
-      font-size: 0.7rem;
-      color: var(--text-light);
-      margin-bottom: 8px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
 
     .tutorial-card h3 {
@@ -719,7 +389,7 @@
       margin-bottom: 16px;
     }
 
-    .tutorial-card .tutorial-demo {
+    .tutorial-card .demo {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -728,13 +398,11 @@
       background: var(--bg);
       border-radius: var(--radius-sm);
       margin-bottom: 16px;
-      font-size: 1rem;
       font-weight: 700;
     }
 
-    .tutorial-card .tutorial-demo .demo-bubble {
-      width: 44px;
-      height: 44px;
+    .tutorial-card .demo .bubble {
+      width: 44px; height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -746,68 +414,14 @@
       transition: all 0.3s;
     }
 
-    .tutorial-card .tutorial-demo .demo-bubble.demo-selected {
+    .tutorial-card .demo .bubble.sel {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
       transform: scale(1.1);
     }
 
-    .tutorial-card .tutorial-demo .demo-tile {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: 2px solid #e0e0e0;
-      background: #fff;
-      font-weight: 700;
-      transition: all 0.3s;
-    }
-
-    .tutorial-card .tutorial-demo .demo-tile.demo-selected {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    .tutorial-card .tutorial-demo .demo-cell {
-      width: 50px;
-      height: 40px;
-      border: 2px dashed #d0d0d0;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: all 0.3s;
-    }
-
-    .tutorial-card .tutorial-demo .demo-cell.demo-filled {
-      background: var(--primary-light);
-      color: #fff;
-      border-style: solid;
-      border-color: var(--primary);
-    }
-
-    .tutorial-card .tutorial-demo .demo-arrow {
-      font-size: 1.4rem;
-      color: var(--primary);
-    }
-
-    .tutorial-card .tutorial-demo .demo-factor-btn {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: 2px solid #e0e0e0;
-      background: #fff;
-      font-weight: 700;
-      transition: all 0.3s;
-    }
-
-    .tutorial-card .tutorial-demo .demo-factor-btn.demo-selected {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
+    .tutorial-card .demo .arrow { font-size: 1.3rem; color: var(--primary); }
 
     .tutorial-btn-row {
       display: flex;
@@ -822,39 +436,30 @@
       font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
     }
 
-    .tutorial-btn-primary {
-      background: var(--primary);
+    .tutorial-btn-primary { background: var(--primary); color: #fff; }
+    .tutorial-btn-skip { background: transparent; color: var(--text-light); }
+
+    /* === Perfect square badge === */
+    .perfect-square-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #fdcb6e, #e17055);
       color: #fff;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      animation: popIn 0.5s ease;
     }
 
-    .tutorial-btn-primary:hover {
-      background: var(--primary-dark);
-    }
-
-    .tutorial-btn-skip {
-      background: transparent;
-      color: var(--text-light);
-    }
-
-    /* === Pulse highlight for interactive elements === */
-    @keyframes pulse-hint {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); }
-      50% { box-shadow: 0 0 0 8px rgba(108, 92, 231, 0); }
-    }
-
-    .hint-pulse {
-      animation: pulse-hint 1.5s ease-in-out infinite;
-    }
-
-    /* === Tap hand indicator === */
+    /* === Tap hand === */
     .tap-hand {
       position: absolute;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       pointer-events: none;
       z-index: 100;
+      bottom: -8px; right: -8px;
       animation: tapBounce 1.2s ease-in-out infinite;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
@@ -864,330 +469,57 @@
       50% { transform: translateY(-6px) scale(1.1); }
     }
 
-    /* === Step label on game elements === */
-    .step-badge {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--danger);
-      color: #fff;
-      font-size: 0.7rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      animation: popIn 0.3s ease;
-    }
-
-    /* === Mode intro banner === */
-    .mode-intro {
-      text-align: center;
-      padding: 10px 16px;
-      background: linear-gradient(135deg, var(--primary-light), var(--primary));
-      color: #fff;
-      border-radius: var(--radius-sm);
-      margin-bottom: 12px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      line-height: 1.5;
-      animation: fadeInUp 0.4s ease;
-    }
-
-    /* === Pair Finder: Expression Visualization === */
-    .pair-visual {
-      text-align: center;
-      margin-bottom: 12px;
-      padding: 12px;
-      background: var(--bg);
-      border-radius: var(--radius-sm);
-      font-size: 1rem;
-      line-height: 1.8;
-      display: none;
-    }
-
-    .pair-visual.show { display: block; animation: fadeInUp 0.3s ease; }
-
-    .pair-visual .visual-expr {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .pair-visual .visual-factor {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .pair-visual .visual-highlight {
-      display: inline-block;
-      background: var(--primary);
-      color: #fff;
-      padding: 1px 8px;
-      border-radius: 6px;
-      font-weight: 800;
-      margin: 0 2px;
-    }
-
-    .pair-visual .visual-label {
-      font-size: 0.78rem;
-      color: var(--text-light);
-      display: block;
-      margin-top: 4px;
-    }
-
-    /* === Same-pair special badge === */
-    .perfect-square-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #fdcb6e, #e17055);
-      color: #fff;
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-top: 6px;
-      animation: popIn 0.5s ease;
-    }
-
-    /* === Tutorial step-by-step overlay on game === */
-    .pair-tutorial-step {
-      background: linear-gradient(135deg, var(--primary-light), var(--primary));
-      color: #fff;
-      padding: 14px 16px;
-      border-radius: var(--radius-sm);
-      margin-bottom: 12px;
-      text-align: center;
-      font-size: 0.88rem;
-      font-weight: 600;
-      line-height: 1.6;
-      animation: fadeInUp 0.3s ease;
-    }
-
-    .pair-tutorial-step .tutorial-step-num {
-      display: inline-block;
-      background: rgba(255,255,255,0.3);
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      line-height: 26px;
-      font-size: 0.8rem;
-      font-weight: 800;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
-
-    .pair-tutorial-step .tutorial-action-btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 20px;
-      background: #fff;
-      color: var(--primary);
-      border: none;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .pair-tutorial-step .tutorial-action-btn:hover {
-      background: #f0f0f7;
-    }
-
-    /* === Duplicate number badge on buttons === */
-    .num-btn .dup-badge {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--warning);
-      color: var(--text);
-      font-size: 0.55rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 5;
-    }
-
-    /* === Success next action === */
-    .success-next {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 8px;
-      font-size: 0.78rem;
-      color: var(--text-light);
-    }
-
-    .success-next .arrow-bounce {
-      display: inline-block;
-      animation: arrowBounce 1s ease-in-out infinite;
-    }
-
-    @keyframes arrowBounce {
-      0%, 100% { transform: translateX(0); }
-      50% { transform: translateX(4px); }
-    }
-
-    /* === Footer === */
-    footer {
-      text-align: center;
-      padding: 12px;
-      font-size: 0.7rem;
-      color: var(--text-light);
-    }
-
-    /* === Hidden === */
     .hidden { display: none !important; }
 
     /* === Responsive === */
-    @media (max-width: 400px) {
-      .expression { font-size: 1.3rem; }
-      .area-cell { width: 80px; height: 60px; font-size: 0.95rem; }
-      .area-header { font-size: 0.85rem; padding: 6px 8px; min-width: 44px; }
+    @media (max-width: 380px) {
+      .expression { font-size: 1.25rem; }
       .num-btn { font-size: 1rem; }
-      .tile { padding: 8px 14px; font-size: 0.9rem; }
-      .container { padding: 8px 10px; }
+      .number-grid { gap: 5px; max-width: 260px; }
+      .container { padding: 0 8px; }
+    }
+
+    @media (min-height: 700px) {
+      .game { gap: 10px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
+    <!-- Header -->
+    <div class="top-bar">
       <h1>因数分解マスター</h1>
-      <p>パズルで学ぶ因数分解</p>
-    </header>
-
-    <!-- Stats -->
-    <div id="stats" class="stats-bar hidden">
-      <div class="stat-item">
-        <div class="label">正解</div>
-        <div class="value" id="correct-count">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="label">問題数</div>
-        <div class="value" id="total-count">0</div>
-      </div>
-      <div class="stat-item">
-        <div class="label">連続</div>
-        <div class="value streak" id="streak-count">0</div>
+      <div class="stats">
+        <span><span class="val" id="correct-count">0</span>/<span id="total-count">0</span></span>
+        <span class="streak"><span class="val" id="streak-count">0</span>連続</span>
       </div>
     </div>
 
-    <!-- Mode Tabs -->
-    <div id="mode-tabs" class="mode-tabs hidden">
-      <button class="mode-tab active" data-mode="pair">
-        <span class="mode-icon">🔍</span>ペアファインダー
-      </button>
-      <button class="mode-tab" data-mode="area">
-        <span class="mode-icon">🧩</span>面積パズル
-      </button>
-      <button class="mode-tab" data-mode="common">
-        <span class="mode-icon">🎯</span>共通因数バンドル
-      </button>
+    <!-- Rule -->
+    <div class="rule-bar">
+      「かけて c、たして b」になる2つの数をタップ → (x+?)(x+?) を完成させよう
     </div>
 
-    <!-- ===== Start Screen ===== -->
-    <div id="start-screen" class="game-card start-screen">
-      <h2>パズルで因数分解を体感しよう！</h2>
-      <p>タップだけで遊べる3つのモード。<br>まずは好きなモードを選んでスタート！</p>
-      <div class="mode-cards">
-        <div class="mode-card" data-start="pair">
-          <div class="icon">🔍</div>
-          <div class="info">
-            <h3>ペアファインダー</h3>
-            <p>x²+5x+6 → 2と3をタップ！ かけ算とたし算が合うペアで因数分解</p>
-          </div>
-        </div>
-        <div class="mode-card" data-start="area">
-          <div class="icon">🧩</div>
-          <div class="info">
-            <h3>面積パズル</h3>
-            <p>タイルを選んでマスに配置！ 長方形を完成させよう</p>
-          </div>
-        </div>
-        <div class="mode-card" data-start="common">
-          <div class="icon">🎯</div>
-          <div class="info">
-            <h3>共通因数バンドル</h3>
-            <p>共通因数を1つ選んでボタンを押すだけ！</p>
-          </div>
-        </div>
+    <!-- Game -->
+    <div class="game">
+      <div class="expression" id="expr"></div>
+      <div class="targets">
+        <div class="target-badge" id="target-product">かけて ?</div>
+        <div class="target-badge" id="target-sum">たして ?</div>
       </div>
+      <div class="status" id="status">数字を2つタップしよう</div>
+      <div class="number-grid" id="grid"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="result" id="result"></div>
     </div>
 
-    <!-- ===== Pair Finder Mode ===== -->
-    <div id="pair-game" class="game-card hidden">
-      <div id="pair-mode-intro" class="mode-intro hidden">
-        👆 (x+?)(x+?) の ? に入る数を見つけよう！<br>「かけて○、たして○」が合う2つの数をタップ
-      </div>
-      <div id="pair-tutorial-area"></div>
-      <div class="expression" id="pair-expr"></div>
-      <div class="instruction" id="pair-instruction"></div>
-      <div class="target-info">
-        <div class="target-badge" id="pair-product">かけて ?</div>
-        <div class="target-badge" id="pair-sum">たして ?</div>
-      </div>
-      <div class="pair-status" id="pair-status">数字を2つタップしよう 👆</div>
-      <div class="number-grid" id="pair-grid"></div>
-      <div class="pair-visual" id="pair-visual"></div>
-      <div class="result-display" id="pair-result"></div>
-      <div class="feedback-area" id="pair-feedback"></div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" id="pair-reset-btn">選び直す</button>
-        <button class="btn btn-primary hidden" id="pair-next-btn">次の問題 →</button>
-      </div>
+    <!-- Buttons -->
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="reset-btn">選び直す</button>
+      <button class="btn btn-primary hidden" id="next-btn">次の問題 →</button>
     </div>
-
-    <!-- ===== Area Model Mode ===== -->
-    <div id="area-game" class="game-card hidden">
-      <div id="area-mode-intro" class="mode-intro hidden">
-        ① 下のタイルをタップ → ② 上のマスをタップで配置！
-      </div>
-      <div class="expression" id="area-expr"></div>
-      <div class="instruction" id="area-instruction">① タイルをタップで選択 → ② マスをタップで配置</div>
-      <div class="area-grid-wrapper">
-        <div class="area-grid" id="area-grid"></div>
-      </div>
-      <div class="tile-bank" id="area-tiles"></div>
-      <div class="result-display" id="area-result"></div>
-      <div class="feedback-area" id="area-feedback"></div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" id="area-reset-btn">やり直す</button>
-        <button class="btn btn-primary hidden" id="area-next-btn">次の問題 →</button>
-      </div>
-    </div>
-
-    <!-- ===== Common Factor Mode ===== -->
-    <div id="common-game" class="game-card hidden">
-      <div id="common-mode-intro" class="mode-intro hidden">
-        👇 すべての項を割り切れる最大の共通因数を選んで「くくる！」
-      </div>
-      <div class="expression" id="common-expr"></div>
-      <div class="instruction" id="common-instruction">共通因数を1つ選んで「これでくくる！」を押そう</div>
-      <div class="terms-display" id="common-terms"></div>
-      <div class="factor-options" id="common-factors"></div>
-      <div class="factor-preview" id="common-preview"></div>
-      <div class="result-display" id="common-result"></div>
-      <div class="feedback-area" id="common-feedback"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary hidden" id="common-confirm-btn">これでくくる！</button>
-        <button class="btn btn-primary hidden" id="common-next-btn">次の問題 →</button>
-      </div>
-    </div>
-
-    <footer>因数分解マスター — パズルで因数分解を体感しよう</footer>
   </div>
 
-  <!-- Confetti container -->
   <div class="confetti-container" id="confetti"></div>
 
 <script>
@@ -1204,7 +536,6 @@ const shuffle = arr => {
   return a;
 };
 
-// Format terms for display
 function formatTerm(coef, varPart) {
   if (coef === 0) return '';
   if (!varPart) return String(coef);
@@ -1238,238 +569,77 @@ function formatFactor(a, b) {
   return '(' + s + ')';
 }
 
-// ========== Tutorial System ==========
+function formatFactorInner(val) {
+  if (val >= 0) return 'x+' + val;
+  return 'x\u2212' + Math.abs(val);
+}
+
+// ========== Tutorial ==========
 const TUTORIAL_KEY = 'factoring-master-tutorial-done';
-const TUTORIAL_MODE_KEY = 'factoring-master-mode-intros';
 
 function isTutorialDone() {
   return localStorage.getItem(TUTORIAL_KEY) === 'true';
 }
 
-function markTutorialDone() {
-  localStorage.setItem(TUTORIAL_KEY, 'true');
-}
-
-function isModeIntroDone(mode) {
-  try {
-    const data = JSON.parse(localStorage.getItem(TUTORIAL_MODE_KEY) || '{}');
-    return data[mode] === true;
-  } catch { return false; }
-}
-
-function markModeIntroDone(mode) {
-  try {
-    const data = JSON.parse(localStorage.getItem(TUTORIAL_MODE_KEY) || '{}');
-    data[mode] = true;
-    localStorage.setItem(TUTORIAL_MODE_KEY, JSON.stringify(data));
-  } catch {}
-}
-
-// Tutorial steps for first-time users
-const tutorialSteps = [
-  {
-    title: 'ようこそ！',
-    body: 'タップだけで因数分解が学べるパズルゲームです。<br>3つのモードを順番に紹介します！',
-    demo: null,
-  },
-  {
-    title: '🔍 ペアファインダー',
-    body: '<b>x² + 5x + 6</b> を因数分解するには？<br>「かけて6、たして5」→ <b>2と3</b> を見つけてタップ！<br>→ <b>(x+2)(x+3)</b> が答え！',
-    demo: 'pair',
-  },
-  {
-    title: '🧩 面積パズル',
-    body: '<b>①タイルをタップ → ②マスをタップ</b>で配置！<br>4つのマスを埋めて長方形を完成させよう。',
-    demo: 'area',
-  },
-  {
-    title: '🎯 共通因数バンドル',
-    body: '<b>共通因数を1つ選んで</b>「くくる！」ボタン。<br>全部の項を割り切れる最大の数を見つけよう。',
-    demo: 'common',
-  },
-  {
-    title: 'さっそく始めよう！',
-    body: '最初は<b>ペアファインダー</b>がおすすめ。<br>間違えても大丈夫、ヒントが出るよ！',
-    demo: null,
-  },
-];
-
-let currentTutorialStep = 0;
-
 function showTutorial() {
-  currentTutorialStep = 0;
-  renderTutorialStep();
-}
-
-function renderTutorialStep() {
-  // Remove existing overlay
-  const existing = document.querySelector('.tutorial-overlay');
-  if (existing) existing.remove();
-
-  if (currentTutorialStep >= tutorialSteps.length) {
-    markTutorialDone();
-    return;
-  }
-
-  const step = tutorialSteps[currentTutorialStep];
-  const total = tutorialSteps.length;
-
   const overlay = document.createElement('div');
   overlay.className = 'tutorial-overlay';
-
-  let demoHTML = '';
-  if (step.demo === 'pair') {
-    demoHTML = `
-      <div class="tutorial-demo" id="tutorial-demo-pair">
-        <div class="demo-bubble" id="td-b1">3</div>
-        <div class="demo-bubble" id="td-b2">5</div>
-        <div class="demo-arrow">→</div>
-        <span style="font-size:0.85rem;color:var(--success);font-weight:700">3×5=15 ✓</span>
-      </div>`;
-  } else if (step.demo === 'area') {
-    demoHTML = `
-      <div class="tutorial-demo" id="tutorial-demo-area">
-        <div class="demo-tile" id="td-t1">x²</div>
-        <div class="demo-arrow">→</div>
-        <div class="demo-cell" id="td-c1"></div>
-        <div class="demo-arrow">→</div>
-        <div class="demo-cell demo-filled">x²</div>
-      </div>`;
-  } else if (step.demo === 'common') {
-    demoHTML = `
-      <div class="tutorial-demo" id="tutorial-demo-common">
-        <div class="demo-factor-btn" id="td-f1">3</div>
-        <div class="demo-factor-btn demo-selected" id="td-f2">3x</div>
-        <div class="demo-factor-btn" id="td-f3">x</div>
-        <div class="demo-arrow">→</div>
-        <span style="font-size:0.85rem;font-weight:700;color:var(--primary)">3x(…)</span>
-      </div>`;
-  }
-
   overlay.innerHTML = `
     <div class="tutorial-card">
-      <div class="tutorial-step-indicator">${currentTutorialStep + 1} / ${total}</div>
-      <h3>${step.title}</h3>
-      <p>${step.body}</p>
-      ${demoHTML}
+      <h3>ペアファインダー</h3>
+      <p>
+        <b>x² + 5x + 6</b> を因数分解しよう！<br>
+        「<b>かけて 6</b>、<b>たして 5</b>」になるペアは？<br>
+        → <b>2</b> と <b>3</b> をタップ！ → <b>(x+2)(x+3)</b>
+      </p>
+      <div class="demo">
+        <div class="bubble" id="td-b1">2</div>
+        <div class="bubble" id="td-b2">3</div>
+        <span class="arrow">→</span>
+        <span style="font-size:0.85rem;color:var(--success);font-weight:700">(x+2)(x+3)</span>
+      </div>
       <div class="tutorial-btn-row">
-        ${currentTutorialStep > 0 ? '<button class="tutorial-btn tutorial-btn-skip" id="tutorial-skip">スキップ</button>' : '<button class="tutorial-btn tutorial-btn-skip" id="tutorial-skip">スキップ</button>'}
-        <button class="tutorial-btn tutorial-btn-primary" id="tutorial-next">
-          ${currentTutorialStep < total - 1 ? '次へ →' : 'はじめる！'}
-        </button>
+        <button class="tutorial-btn tutorial-btn-skip" id="tutorial-skip">スキップ</button>
+        <button class="tutorial-btn tutorial-btn-primary" id="tutorial-start">はじめる！</button>
       </div>
     </div>`;
 
   document.body.appendChild(overlay);
 
-  // Animate demo elements
-  if (step.demo === 'pair') {
-    setTimeout(() => {
-      const b1 = document.getElementById('td-b1');
-      const b2 = document.getElementById('td-b2');
-      if (b1) b1.classList.add('demo-selected');
-      setTimeout(() => { if (b2) b2.classList.add('demo-selected'); }, 400);
-    }, 500);
-  } else if (step.demo === 'area') {
-    setTimeout(() => {
-      const t1 = document.getElementById('td-t1');
-      if (t1) t1.classList.add('demo-selected');
-      setTimeout(() => {
-        const c1 = document.getElementById('td-c1');
-        if (c1) { c1.classList.add('demo-filled'); c1.textContent = 'x²'; }
-      }, 600);
-    }, 500);
-  }
+  setTimeout(() => {
+    const b1 = document.getElementById('td-b1');
+    const b2 = document.getElementById('td-b2');
+    if (b1) b1.classList.add('sel');
+    setTimeout(() => { if (b2) b2.classList.add('sel'); }, 400);
+  }, 500);
 
-  document.getElementById('tutorial-next').addEventListener('click', () => {
-    currentTutorialStep++;
-    renderTutorialStep();
-  });
-
-  document.getElementById('tutorial-skip').addEventListener('click', () => {
+  const close = () => {
     overlay.remove();
-    markTutorialDone();
-  });
+    localStorage.setItem(TUTORIAL_KEY, 'true');
+  };
 
-  // Close on overlay background click
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      currentTutorialStep++;
-      renderTutorialStep();
-    }
-  });
+  document.getElementById('tutorial-start').addEventListener('click', close);
+  document.getElementById('tutorial-skip').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
 }
 
-// ========== Visual Hints ==========
+// ========== Hints ==========
 let hintTimers = [];
 
-function clearAllHints() {
+function clearHints() {
   hintTimers.forEach(t => clearTimeout(t));
   hintTimers = [];
   document.querySelectorAll('.hint-pulse').forEach(el => el.classList.remove('hint-pulse'));
   document.querySelectorAll('.tap-hand').forEach(el => el.remove());
-  document.querySelectorAll('.step-badge').forEach(el => el.remove());
 }
 
-function addPulseHint(selector, delay) {
-  const timer = setTimeout(() => {
-    document.querySelectorAll(selector).forEach(el => {
-      el.classList.add('hint-pulse');
-    });
-  }, delay || 1500);
-  hintTimers.push(timer);
-}
-
-function addTapHand(targetEl) {
-  if (!targetEl) return;
+function addTapHand(el) {
+  if (!el) return;
   const hand = document.createElement('div');
   hand.className = 'tap-hand';
-  hand.textContent = '👆';
-  hand.style.bottom = '-10px';
-  hand.style.right = '-10px';
-  targetEl.style.position = 'relative';
-  targetEl.appendChild(hand);
-}
-
-function showModeIntro(mode) {
-  const introId = mode + '-mode-intro';
-  const introEl = $(introId);
-  if (!introEl) return;
-
-  if (!isModeIntroDone(mode)) {
-    introEl.classList.remove('hidden');
-    markModeIntroDone(mode);
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
-      introEl.style.transition = 'opacity 0.3s';
-      introEl.style.opacity = '0';
-      setTimeout(() => {
-        introEl.classList.add('hidden');
-        introEl.style.opacity = '';
-      }, 300);
-    }, 5000);
-  }
-}
-
-// ========== Game State ==========
-const state = {
-  mode: null,
-  correct: 0,
-  total: 0,
-  streak: 0,
-  isFirstProblem: { pair: true, area: true, common: true },
-  // Pair finder
-  pair: { p: 0, q: 0, b: 0, c: 0, selected: [], solved: false },
-  // Area model
-  area: { p: 0, q: 0, cells: [null, null, null, null], selectedTile: null, solved: false, tiles: [] },
-  // Common factor
-  common: { k: 0, kVar: '', terms: [], innerTerms: [], selectedFactor: null, solved: false, factorOptions: [] }
-};
-
-function updateStats() {
-  $('correct-count').textContent = state.correct;
-  $('total-count').textContent = state.total;
-  $('streak-count').textContent = state.streak;
+  hand.textContent = '\uD83D\uDC46';
+  el.style.position = 'relative';
+  el.appendChild(hand);
 }
 
 // ========== Celebrations ==========
@@ -1496,59 +666,39 @@ function showStreakPopup() {
   if (state.streak < 3) return;
   const popup = document.createElement('div');
   popup.className = 'streak-popup';
-  popup.textContent = `🔥 ${state.streak}連続！`;
+  popup.textContent = `\uD83D\uDD25 ${state.streak}\u9023\u7D9A\uFF01`;
   document.body.appendChild(popup);
   setTimeout(() => popup.remove(), 1200);
 }
 
-// ========== Navigation ==========
-function showScreen(id) {
-  ['start-screen', 'pair-game', 'area-game', 'common-game'].forEach(s => {
-    $(s).classList.add('hidden');
-  });
-  $(id).classList.remove('hidden');
-  $(id).classList.add('fade-in-up');
+// ========== Game State ==========
+const state = {
+  correct: 0,
+  total: 0,
+  streak: 0,
+  isFirst: true,
+  p: 0, q: 0, b: 0, c: 0,
+  selected: [],
+  solved: false,
+  isSamePair: false,
+  tutorialStep: 0,
+  tutorialLocked: false
+};
+
+function updateStats() {
+  $('correct-count').textContent = state.correct;
+  $('total-count').textContent = state.total;
+  $('streak-count').textContent = state.streak;
 }
 
-function startMode(mode) {
-  state.mode = mode;
-  $('stats').classList.remove('hidden');
-  $('mode-tabs').classList.remove('hidden');
-  $('start-screen').classList.add('hidden');
-
-  document.querySelectorAll('.mode-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.mode === mode);
-  });
-
-  showModeIntro(mode);
-
-  if (mode === 'pair') { showScreen('pair-game'); newPairProblem(); }
-  else if (mode === 'area') { showScreen('area-game'); newAreaProblem(); }
-  else if (mode === 'common') { showScreen('common-game'); newCommonProblem(); }
-}
-
-// ================================================================
-//  MODE 1: PAIR FINDER
-// ================================================================
-
-// Tutorial state for first problem
-let pairTutorialStep = 0; // 0=not in tutorial, 1..4=guided steps
-let pairTutorialLocked = false; // lock interactions during tutorial animations
-
-function newPairProblem() {
-  clearAllHints();
-  $('pair-tutorial-area').innerHTML = '';
-  $('pair-visual').className = 'pair-visual';
-  $('pair-visual').innerHTML = '';
+// ========== New Problem ==========
+function newProblem() {
+  clearHints();
 
   let p, q;
-  const isFirst = state.isFirstProblem.pair;
-
-  if (isFirst) {
-    // First problem: simple positive, easy to understand
+  if (state.isFirst) {
     p = 2; q = 3;
   } else {
-    // Allow same-number pairs (perfect squares) ~20% of the time
     const allowSame = Math.random() < 0.2;
     do {
       p = randInt(-9, 9);
@@ -1560,57 +710,47 @@ function newPairProblem() {
   const c = p * q;
   const isSamePair = p === q;
 
-  state.pair = { p, q, b, c, selected: [], solved: false, isSamePair };
+  Object.assign(state, { p, q, b, c, selected: [], solved: false, isSamePair });
 
-  $('pair-expr').textContent = formatPoly(1, b, c);
-  $('pair-instruction').innerHTML = `<b>かけて ${c}</b>、<b>たして ${b}</b> になる2つの数を見つけよう`;
-  $('pair-product').textContent = 'かけて ' + c;
-  $('pair-sum').textContent = 'たして ' + b;
-  $('pair-status').innerHTML = '数字を2つタップしよう 👆';
-  $('pair-result').className = 'result-display';
-  $('pair-result').textContent = '';
-  $('pair-feedback').className = 'feedback-area';
-  $('pair-feedback').textContent = '';
-  $('pair-next-btn').classList.add('hidden');
-  $('pair-reset-btn').classList.remove('hidden');
+  $('expr').textContent = formatPoly(1, b, c);
+  $('target-product').textContent = '\u304B\u3051\u3066 ' + c;
+  $('target-sum').textContent = '\u305F\u3057\u3066 ' + b;
+  $('status').innerHTML = '\u6570\u5B57\u30922\u3064\u30BF\u30C3\u30D7\u3057\u3088\u3046';
+  $('result').textContent = '';
+  $('feedback').textContent = '';
+  $('feedback').className = 'feedback';
+  $('next-btn').classList.add('hidden');
+  $('reset-btn').classList.remove('hidden');
 
-  // Build number grid — with duplicate support for same-pair
-  buildPairGrid(p, q, isSamePair);
+  buildGrid(p, q, isSamePair);
 
-  // First problem: interactive guided tutorial
-  if (isFirst) {
-    pairTutorialStep = 1;
-    pairTutorialLocked = true;
-    showPairTutorialStep1();
+  // First problem: guided tutorial steps
+  if (state.isFirst) {
+    state.tutorialStep = 1;
+    state.tutorialLocked = true;
+    showGuidedStep1();
   } else {
-    pairTutorialStep = 0;
-    pairTutorialLocked = false;
+    state.tutorialStep = 0;
+    state.tutorialLocked = false;
   }
 }
 
-function buildPairGrid(p, q, isSamePair) {
-  // Start with answer numbers
+function buildGrid(p, q, isSamePair) {
   const numList = isSamePair ? [p, p] : [p, q];
 
-  // Build distractor pool: -9..9 excluding 0 and answer values
   const distractors = [];
   for (let i = -9; i <= 9; i++) {
     if (i !== 0 && i !== p && i !== q) distractors.push(i);
   }
-  const shuffledDistractors = shuffle(distractors);
-
-  // Fill to 15
-  for (const d of shuffledDistractors) {
+  const shuffled = shuffle(distractors);
+  for (const d of shuffled) {
     if (numList.length >= 15) break;
     numList.push(d);
   }
-  while (numList.length < 15) {
-    numList.push(randInt(1, 9));
-  }
+  while (numList.length < 15) numList.push(randInt(1, 9));
 
   const finalNums = shuffle(numList.slice(0, 15));
-
-  const grid = $('pair-grid');
+  const grid = $('grid');
   grid.innerHTML = '';
 
   finalNums.forEach((n, i) => {
@@ -1618,20 +758,17 @@ function buildPairGrid(p, q, isSamePair) {
     btn.className = 'num-btn';
     btn.textContent = n;
     btn.dataset.value = n;
-    btn.dataset.uid = i; // unique even if same value
-    btn.addEventListener('click', () => selectPairNumber(n, btn));
+    btn.dataset.uid = i;
+    btn.addEventListener('click', () => selectNumber(n, btn));
     grid.appendChild(btn);
   });
 
-  // Mark duplicate buttons for same-pair problems
   if (isSamePair) {
-    const sameBtns = grid.querySelectorAll('.num-btn');
     let dupCount = 0;
-    sameBtns.forEach(btn => {
+    grid.querySelectorAll('.num-btn').forEach(btn => {
       if (parseInt(btn.dataset.value) === p) {
         dupCount++;
         if (dupCount <= 2) {
-          // Small visual indicator that this number appears twice
           const badge = document.createElement('span');
           badge.className = 'dup-badge';
           badge.textContent = dupCount === 1 ? 'A' : 'B';
@@ -1642,187 +779,92 @@ function buildPairGrid(p, q, isSamePair) {
   }
 }
 
-// === Interactive Tutorial (1st problem) ===
-function showPairTutorialStep1() {
-  const { b, c, p, q } = state.pair;
-  const area = $('pair-tutorial-area');
-  area.innerHTML = `
-    <div class="pair-tutorial-step">
-      <span class="tutorial-step-num">1</span>
-      <b>クリア条件</b>：「かけて ${c}、たして ${b}」になる2つの数を見つけよう！<br>
-      <span style="font-size:0.8rem;opacity:0.9">
-        x² + ${b}x + ${c} = (x + <b>?</b>)(x + <b>?</b>) の <b>?</b> に入る数を探すゲームだよ
-      </span><br>
-      <button class="tutorial-action-btn" id="pair-tut-next1">わかった！ →</button>
-    </div>`;
-  document.getElementById('pair-tut-next1').addEventListener('click', () => {
-    pairTutorialStep = 2;
-    showPairTutorialStep2();
+// ========== Guided Tutorial (1st problem) ==========
+function showGuidedStep1() {
+  const { b, c } = state;
+  $('feedback').className = 'feedback correct';
+  $('feedback').innerHTML =
+    `<b>Step 1</b>\uFF1A\u300C\u304B\u3051\u3066 ${c}\u3001\u305F\u3057\u3066 ${b}\u300D\u306B\u306A\u308B2\u3064\u306E\u6570\u3092\u898B\u3064\u3051\u3088\u3046\uFF01` +
+    `<br><button style="margin-top:4px;padding:4px 16px;border:none;border-radius:6px;background:#fff;color:var(--primary);font-weight:700;cursor:pointer" id="tut-next1">\u308F\u304B\u3063\u305F\uFF01 \u2192</button>`;
+  document.getElementById('tut-next1').addEventListener('click', showGuidedStep2);
+}
+
+function showGuidedStep2() {
+  const { b, c, p, q } = state;
+  $('feedback').innerHTML =
+    `<b>Step 2</b>\uFF1A${c} = ${p}\u00D7${q}\u3001${p}+${q} = ${b} \u2192 <b>${p}</b> \u3068 <b>${q}</b> \u304C\u7B54\u3048\uFF01` +
+    `<br>\u4E0B\u306E\u30DC\u30BF\u30F3\u304B\u3089\u30BF\u30C3\u30D7\u3057\u3066\u307F\u3088\u3046` +
+    `<br><button style="margin-top:4px;padding:4px 16px;border:none;border-radius:6px;background:#fff;color:var(--primary);font-weight:700;cursor:pointer" id="tut-next2">\u30BF\u30C3\u30D7\u3059\u308B\uFF01</button>`;
+  document.getElementById('tut-next2').addEventListener('click', () => {
+    state.tutorialStep = 3;
+    state.tutorialLocked = false;
+    $('feedback').className = 'feedback correct';
+    $('feedback').innerHTML = `\u5149\u3063\u3066\u3044\u308B <b>${p}</b> \u3068 <b>${q}</b> \u3092\u30BF\u30C3\u30D7\uFF01`;
+
+    // Highlight answer buttons
+    const buttons = $('grid').querySelectorAll('.num-btn');
+    const found = [];
+    buttons.forEach(btn => {
+      const val = parseInt(btn.dataset.value);
+      if (val === p && !found.includes('p')) { addTapHand(btn); btn.classList.add('hint-pulse'); found.push('p'); }
+      else if (val === q && !found.includes('q')) { addTapHand(btn); btn.classList.add('hint-pulse'); found.push('q'); }
+    });
   });
 }
 
-function showPairTutorialStep2() {
-  const { b, c, p, q } = state.pair;
-  const area = $('pair-tutorial-area');
-  area.innerHTML = `
-    <div class="pair-tutorial-step">
-      <span class="tutorial-step-num">2</span>
-      まず「<b>かけて ${c}</b>」になるペアを考えよう<br>
-      <span style="font-size:0.8rem;opacity:0.9">
-        ${c} = 1×${c}${c >= 4 ? `, ${p}×${q}` : ''} …<br>
-        この中で「<b>たして ${b}</b>」にもなるのは？
-      </span><br>
-      <button class="tutorial-action-btn" id="pair-tut-next2">${p} と ${q} だ！ →</button>
-    </div>`;
-  document.getElementById('pair-tut-next2').addEventListener('click', () => {
-    pairTutorialStep = 3;
-    showPairTutorialStep3();
-  });
-}
+// ========== Selection ==========
+function selectNumber(n, btn) {
+  if (state.solved || state.tutorialLocked) return;
+  clearHints();
 
-function showPairTutorialStep3() {
-  const { p, q } = state.pair;
-  const area = $('pair-tutorial-area');
-  area.innerHTML = `
-    <div class="pair-tutorial-step">
-      <span class="tutorial-step-num">3</span>
-      下の数字ボタンから <b>${p}</b> と <b>${q}</b> をタップしよう！<br>
-      <span style="font-size:0.8rem;opacity:0.9">光っているボタンをタップ 👆</span>
-    </div>`;
-  pairTutorialLocked = false;
-
-  // Highlight answer buttons
-  const grid = $('pair-grid');
-  const buttons = grid.querySelectorAll('.num-btn');
-  let found = [];
-  buttons.forEach(btn => {
-    const val = parseInt(btn.dataset.value);
-    if (val === p && found.filter(f => f === p).length < 1) { addTapHand(btn); btn.classList.add('hint-pulse'); found.push(p); }
-    else if (val === q && found.filter(f => f === q).length < 1) { addTapHand(btn); btn.classList.add('hint-pulse'); found.push(q); }
-  });
-}
-
-function clearPairTutorial() {
-  $('pair-tutorial-area').innerHTML = '';
-  pairTutorialStep = 0;
-}
-
-// === Selection Logic ===
-function selectPairNumber(n, btn) {
-  if (state.pair.solved) return;
-  if (pairTutorialLocked) return; // Block during tutorial animation
-  clearAllHints();
-
-  const sel = state.pair.selected;
-
-  // Deselect if already selected (by same button instance)
   if (btn.classList.contains('selected')) {
     btn.classList.remove('selected');
-    state.pair.selected = sel.filter(s => s.btn !== btn);
-    updatePairStatus();
-    updatePairVisual();
+    state.selected = state.selected.filter(s => s.btn !== btn);
+    updateStatus();
     return;
   }
 
-  if (sel.length >= 2) return;
+  if (state.selected.length >= 2) return;
 
   btn.classList.add('selected');
-  sel.push({ value: n, btn });
+  state.selected.push({ value: n, btn });
 
-  if (sel.length === 2) {
-    checkPairAnswer();
+  if (state.selected.length === 2) {
+    checkAnswer();
   } else {
-    updatePairStatus();
-    updatePairVisual();
+    updateStatus();
   }
 }
 
-function updatePairStatus() {
-  const sel = state.pair.selected;
-  if (sel.length === 0) {
-    $('pair-status').innerHTML = '数字を2つタップしよう 👆';
-  } else if (sel.length === 1) {
-    $('pair-status').innerHTML = `<strong>${sel[0].value}</strong> を選択中… もう1つタップ！`;
+function updateStatus() {
+  if (state.selected.length === 0) {
+    $('status').innerHTML = '\u6570\u5B57\u30922\u3064\u30BF\u30C3\u30D7\u3057\u3088\u3046';
+  } else if (state.selected.length === 1) {
+    $('status').innerHTML = `<strong>${state.selected[0].value}</strong> \u3092\u9078\u629E\u4E2D\u2026 \u3082\u30461\u3064\u30BF\u30C3\u30D7\uFF01`;
   }
 }
 
-// Format a factor term for visual display: returns e.g. "x+3" or "x−2"
-function formatFactorInner(val) {
-  if (val >= 0) return 'x+' + val;
-  return 'x\u2212' + Math.abs(val);
-}
-
-// Show how selected numbers connect to the expression
-function updatePairVisual() {
-  const sel = state.pair.selected;
-  const vis = $('pair-visual');
-  if (sel.length === 0) {
-    vis.className = 'pair-visual';
-    vis.innerHTML = '';
-    return;
-  }
-  if (sel.length === 1) {
-    const v = sel[0].value;
-    vis.className = 'pair-visual show';
-    vis.innerHTML = `
-      <span class="visual-factor">(<span class="visual-highlight">${formatFactorInner(v)}</span>)(x + <b>?</b>)</span>
-      <span class="visual-label">もう1つ選ぶと因数分解が完成するよ</span>`;
-  }
-}
-
-function showPairVisualResult(v1, v2, isSame) {
-  const vis = $('pair-visual');
-  vis.className = 'pair-visual show';
-  const f1 = formatFactorInner(v1);
-  const f2 = formatFactorInner(v2);
-  if (isSame) {
-    vis.innerHTML = `
-      <span class="visual-factor">(<span class="visual-highlight">${f1}</span>)² = (${f1})(${f1})</span>
-      <span class="visual-label">同じ数のペア → 完全平方式！</span>
-      <div class="perfect-square-badge">✨ 完全平方式！ (${f1})²</div>`;
-  } else {
-    vis.innerHTML = `
-      <span class="visual-factor">(<span class="visual-highlight">${f1}</span>)(<span class="visual-highlight">${f2}</span>)</span>
-      <span class="visual-label">${v1} × ${v2} = ${v1*v2}（かけ算OK）、${v1} + ${v2} = ${v1+v2}（たし算OK）</span>`;
-  }
-}
-
-function checkPairAnswer() {
-  const { b, c, selected, p, q, isSamePair } = state.pair;
+function checkAnswer() {
+  const { b, c, selected, p, q, isSamePair } = state;
   const v1 = selected[0].value;
   const v2 = selected[1].value;
   const product = v1 * v2;
   const sum = v1 + v2;
-
   const productOk = product === c;
   const sumOk = sum === b;
 
-  const productClass = productOk ? 'match' : 'no-match';
-  const sumClass = sumOk ? 'match' : 'no-match';
-
-  $('pair-status').innerHTML =
-    `<span class="pair-calc ${productClass}">${v1} × ${v2} = ${product}</span>` +
-    `<span class="pair-calc ${sumClass}">${v1} + ${v2} = ${sum}</span>`;
+  $('status').innerHTML =
+    `<span class="pair-calc ${productOk ? 'match' : 'no-match'}">${v1} \u00D7 ${v2} = ${product}</span>` +
+    `<span class="pair-calc ${sumOk ? 'match' : 'no-match'}">${v1} + ${v2} = ${sum}</span>`;
 
   if (productOk && sumOk) {
-    state.pair.solved = true;
+    state.solved = true;
     state.correct++;
     state.total++;
     state.streak++;
-    state.isFirstProblem.pair = false;
+    state.isFirst = false;
+    state.tutorialStep = 0;
     updateStats();
-
-    // Clear tutorial if active
-    if (pairTutorialStep > 0) {
-      $('pair-tutorial-area').innerHTML = `
-        <div class="pair-tutorial-step" style="background: linear-gradient(135deg, var(--success), #00b894);">
-          🎉 クリア！ これがペアファインダーだよ！<br>
-          <span style="font-size:0.8rem;opacity:0.9">
-            「かけて○、たして○」のペアを見つけると因数分解ができる
-          </span>
-        </div>`;
-      pairTutorialStep = 0;
-    }
 
     selected.forEach(s => {
       s.btn.classList.remove('selected');
@@ -1832,35 +874,23 @@ function checkPairAnswer() {
       if (!b.classList.contains('correct-anim')) b.classList.add('disabled');
     });
 
-    // Show visual result with expression breakdown
-    showPairVisualResult(p, q, isSamePair);
-
-    // Show factored form
     if (isSamePair) {
-      $('pair-result').textContent = formatFactor(1, p) + '²';
+      $('result').innerHTML = formatFactor(1, p) + '\u00B2 <span class="perfect-square-badge">\u2728 \u5B8C\u5168\u5E73\u65B9\u5F0F\uFF01</span>';
     } else {
-      $('pair-result').textContent = formatFactor(1, p) + formatFactor(1, q);
+      $('result').textContent = formatFactor(1, p) + formatFactor(1, q);
     }
-    $('pair-result').className = 'result-display show';
-    $('pair-feedback').className = 'feedback-area correct';
 
-    let successMsg = '🎉 正解！ ペアを見つけた！';
-    if (isSamePair) {
-      successMsg = '🎉 正解！ 同じ数のペア → 完全平方式！';
-    }
-    $('pair-feedback').innerHTML = successMsg + '<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
-    $('pair-next-btn').classList.remove('hidden');
-    $('pair-reset-btn').classList.add('hidden');
+    $('feedback').className = 'feedback correct';
+    $('feedback').innerHTML = isSamePair
+      ? '\uD83C\uDF89 \u6B63\u89E3\uFF01 \u540C\u3058\u6570\u306E\u30DA\u30A2 \u2192 \u5B8C\u5168\u5E73\u65B9\u5F0F\uFF01'
+      : '\uD83C\uDF89 \u6B63\u89E3\uFF01 \u30DA\u30A2\u3092\u898B\u3064\u3051\u305F\uFF01';
 
-    setTimeout(() => {
-      $('pair-next-btn').classList.add('hint-pulse');
-    }, 800);
+    $('next-btn').classList.remove('hidden');
+    $('reset-btn').classList.add('hidden');
+    setTimeout(() => $('next-btn').classList.add('hint-pulse'), 600);
 
     showConfetti();
-    if (isSamePair) {
-      // Double confetti for perfect square
-      setTimeout(() => showConfetti(), 400);
-    }
+    if (isSamePair) setTimeout(() => showConfetti(), 400);
     showStreakPopup();
   } else {
     state.total++;
@@ -1871,604 +901,46 @@ function checkPairAnswer() {
 
     let reason = '';
     if (!productOk && !sumOk) {
-      reason = `❌ かけ算: ${v1} × ${v2} = ${product}（目標 ${c}）`
-        + `<br>❌ たし算: ${v1} + ${v2} = ${sum}（目標 ${b}）`
-        + `<br>💡 まず「かけて ${c}」になるペアを探してみよう`;
+      reason = `\u2716 ${v1}\u00D7${v2}=${product}(\u76EE\u6A19${c}) \u2716 ${v1}+${v2}=${sum}(\u76EE\u6A19${b})<br>\uD83D\uDCA1 \u307E\u305A\u300C\u304B\u3051\u3066${c}\u300D\u306B\u306A\u308B\u30DA\u30A2\u3092\u63A2\u305D\u3046`;
     } else if (!productOk) {
-      reason = `✅ たし算は合ってる！（${v1} + ${v2} = ${b}）`
-        + `<br>❌ でも かけ算: ${v1} × ${v2} = ${product}（目標 ${c}）`
-        + `<br>💡 かけて ${c} になる組み合わせは？`;
+      reason = `\u2714 \u305F\u3057\u7B97OK\uFF01 \u2716 \u304B\u3051\u7B97: ${v1}\u00D7${v2}=${product}(\u76EE\u6A19${c})<br>\uD83D\uDCA1 \u304B\u3051\u3066${c}\u306B\u306A\u308B\u7D44\u307F\u5408\u308F\u305B\u306F\uFF1F`;
     } else {
-      // Product matches but sum doesn't
       const diff = Math.abs(sum - b);
-      let hint = `💡 ${c}の約数で、たして ${b} になるペアは？`;
-      if (isSamePair) {
-        hint = `💡 同じ数を2回使えるよ！ ${p}×${p}=${c}, ${p}+${p}=${b} を試してみて`;
-      }
-      reason = `✅ かけ算は合ってる！（${v1} × ${v2} = ${c}）`
-        + `<br>❌ でも たし算: ${v1} + ${v2} = ${sum}（目標 ${b}、${diff} ずれてる）`
-        + `<br>${hint}`;
+      let hint = `\uD83D\uDCA1 ${c}\u306E\u7D04\u6570\u3067\u3001\u305F\u3057\u3066${b}\u306B\u306A\u308B\u30DA\u30A2\u306F\uFF1F`;
+      if (isSamePair) hint = `\uD83D\uDCA1 \u540C\u3058\u6570\u30922\u56DE\u4F7F\u3048\u308B\u3088\uFF01 ${p}\u00D7${p}=${c}, ${p}+${p}=${b}`;
+      reason = `\u2714 \u304B\u3051\u7B97OK\uFF01 \u2716 \u305F\u3057\u7B97: ${v1}+${v2}=${sum}(\u76EE\u6A19${b}\u3001${diff}\u305A\u308C)<br>${hint}`;
     }
-    $('pair-feedback').className = 'feedback-area wrong';
-    $('pair-feedback').innerHTML = reason;
 
-    // Show visual feedback
-    const vis = $('pair-visual');
-    vis.className = 'pair-visual show';
-    vis.innerHTML = `
-      <span class="visual-factor" style="opacity:0.5">(<span class="visual-highlight" style="background:var(--danger)">${formatFactorInner(v1)}</span>)(<span class="visual-highlight" style="background:var(--danger)">${formatFactorInner(v2)}</span>)</span>
-      <span class="visual-label">この組み合わせだと ${formatPoly(1, sum, product)} になってしまう</span>`;
+    $('feedback').className = 'feedback wrong';
+    $('feedback').innerHTML = reason;
 
     setTimeout(() => {
-      selected.forEach(s => {
-        s.btn.classList.remove('selected', 'wrong-anim');
-      });
-      state.pair.selected = [];
-      // Don't clear visual on wrong — keep it visible as reference
+      selected.forEach(s => s.btn.classList.remove('selected', 'wrong-anim'));
+      state.selected = [];
     }, 800);
   }
 }
 
-$('pair-reset-btn').addEventListener('click', () => {
-  if (state.pair.solved) return;
-  state.pair.selected.forEach(s => s.btn.classList.remove('selected'));
-  state.pair.selected = [];
-  $('pair-status').innerHTML = '数字を2つタップしよう 👆';
-  $('pair-feedback').className = 'feedback-area';
-  $('pair-visual').className = 'pair-visual';
-  $('pair-visual').innerHTML = '';
-});
-
-$('pair-next-btn').addEventListener('click', () => {
-  $('pair-next-btn').classList.remove('hint-pulse');
-  newPairProblem();
-});
-
-// ================================================================
-//  MODE 2: AREA MODEL PUZZLE
-// ================================================================
-function newAreaProblem() {
-  clearAllHints();
-  let p, q;
-  if (state.isFirstProblem.area) {
-    p = 2; q = 3; // Easy first problem
-  } else {
-    do {
-      p = randInt(1, 7);
-      q = randInt(1, 7);
-    } while (p === q && Math.random() < 0.5);
-  }
-
-  const b = p + q;
-  const c = p * q;
-
-  state.area = {
-    p, q, cells: [null, null, null, null],
-    selectedTile: null, solved: false, tiles: []
-  };
-
-  $('area-expr').textContent = formatPoly(1, b, c);
-  $('area-result').className = 'result-display';
-  $('area-result').textContent = '';
-  $('area-feedback').className = 'feedback-area';
-  $('area-next-btn').classList.add('hidden');
-  $('area-reset-btn').classList.remove('hidden');
-
-  // Update instruction
-  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
-
-  // Build tiles
-  const correctTiles = [
-    { label: 'x\u00B2', value: 'x2' },
-    { label: formatTerm(p, 'x'), value: 'px', num: p },
-    { label: formatTerm(q, 'x'), value: 'qx', num: q },
-    { label: String(p * q), value: 'pq', num: p * q }
-  ];
-
-  const distractorValues = new Set();
-  distractorValues.add(p + q);
-  distractorValues.add(p + 1);
-  distractorValues.add(q + 1);
-  if (p !== 1) distractorValues.add(p - 1);
-
-  const distractors = [];
-  const dNums = [...distractorValues].filter(d => d > 0 && d !== p && d !== q && d !== p * q);
-  if (dNums.length > 0) {
-    distractors.push({ label: formatTerm(dNums[0], 'x'), value: 'dx1', num: dNums[0] });
-  }
-  if (dNums.length > 1) {
-    distractors.push({ label: String(dNums[1]), value: 'dn1', num: dNums[1] });
-  }
-  let dConst = p * q + pick([-2, -1, 1, 2]);
-  if (dConst <= 0 || dConst === p * q) dConst = p * q + 3;
-  distractors.push({ label: String(dConst), value: 'dn2', num: dConst });
-
-  const allTiles = shuffle([...correctTiles, ...distractors]);
-  state.area.tiles = allTiles;
-  state.area.correctValues = ['x2', 'px', 'qx', 'pq'];
-
-  renderAreaGrid();
-  renderAreaTiles();
-
-  // Hints for first problem
-  if (state.isFirstProblem.area) {
-    addPulseHint('.tile', 800);
-  }
-}
-
-function renderAreaGrid() {
-  const { p, q, cells, solved } = state.area;
-  const grid = $('area-grid');
-  grid.innerHTML = '';
-
-  const corner = document.createElement('div');
-  corner.className = 'area-corner';
-  grid.appendChild(corner);
-
-  const colH1 = document.createElement('div');
-  colH1.className = 'area-header' + (solved ? ' revealed' : '');
-  colH1.textContent = solved ? 'x' : '?';
-  grid.appendChild(colH1);
-
-  const colH2 = document.createElement('div');
-  colH2.className = 'area-header' + (solved ? ' revealed' : '');
-  colH2.textContent = solved ? String(p) : '?';
-  grid.appendChild(colH2);
-
-  const rowH1 = document.createElement('div');
-  rowH1.className = 'area-header' + (solved ? ' revealed' : '');
-  rowH1.textContent = solved ? 'x' : '?';
-  grid.appendChild(rowH1);
-
-  grid.appendChild(createAreaCell(0));
-  grid.appendChild(createAreaCell(1));
-
-  const rowH2 = document.createElement('div');
-  rowH2.className = 'area-header' + (solved ? ' revealed' : '');
-  rowH2.textContent = solved ? String(q) : '?';
-  grid.appendChild(rowH2);
-
-  grid.appendChild(createAreaCell(2));
-  grid.appendChild(createAreaCell(3));
-
-  // Highlight empty cells when a tile is selected
-  if (!solved && state.area.selectedTile !== null) {
-    grid.querySelectorAll('.area-cell:not(.filled)').forEach(cell => {
-      cell.classList.add('hint-pulse');
-    });
-  }
-}
-
-function createAreaCell(index) {
-  const cell = document.createElement('div');
-  const tileValue = state.area.cells[index];
-
-  if (state.area.solved) {
-    cell.className = 'area-cell correct-cell';
-    const correctLabels = ['x\u00B2', formatTerm(state.area.p, 'x'), formatTerm(state.area.q, 'x'), String(state.area.p * state.area.q)];
-    cell.textContent = correctLabels[index];
-  } else if (tileValue !== null) {
-    const tile = state.area.tiles.find(t => t.value === tileValue);
-    cell.className = 'area-cell filled';
-    cell.textContent = tile ? tile.label : '';
-    cell.addEventListener('click', () => removeFromCell(index));
-  } else {
-    cell.className = 'area-cell';
-    cell.textContent = '';
-    cell.addEventListener('click', () => placeInCell(index));
-  }
-
-  return cell;
-}
-
-function renderAreaTiles() {
-  const bank = $('area-tiles');
-  bank.innerHTML = '';
-  const usedValues = state.area.cells.filter(v => v !== null);
-
-  state.area.tiles.forEach(tile => {
-    const el = document.createElement('button');
-    el.className = 'tile';
-    if (usedValues.includes(tile.value)) {
-      el.classList.add('used');
-    }
-    if (state.area.selectedTile === tile.value) {
-      el.classList.add('selected');
-    }
-    el.textContent = tile.label;
-    el.addEventListener('click', () => selectAreaTile(tile.value));
-    bank.appendChild(el);
-  });
-}
-
-function selectAreaTile(value) {
-  if (state.area.solved) return;
-  if (state.area.cells.includes(value)) return;
-  clearAllHints();
-
-  if (state.area.selectedTile === value) {
-    state.area.selectedTile = null;
-  } else {
-    state.area.selectedTile = value;
-  }
-  renderAreaGrid();
-  renderAreaTiles();
-
-  // Update instruction when tile is selected
-  if (state.area.selectedTile !== null) {
-    $('area-instruction').innerHTML = '👆 マスをタップして配置しよう！';
-  } else {
-    $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
-  }
-}
-
-function placeInCell(index) {
-  if (state.area.solved) return;
-  if (state.area.selectedTile === null) {
-    // If no tile selected, hint the user
-    $('area-instruction').innerHTML = '⬇ まず下のタイルをタップして選ぼう！';
-    addPulseHint('.tile:not(.used)', 0);
-    return;
-  }
-  if (state.area.cells[index] !== null) return;
-
-  state.area.cells[index] = state.area.selectedTile;
-  state.area.selectedTile = null;
-
-  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
-
-  renderAreaGrid();
-  renderAreaTiles();
-
-  if (state.area.cells.every(c => c !== null)) {
-    checkAreaAnswer();
-  }
-}
-
-function removeFromCell(index) {
-  if (state.area.solved) return;
-  state.area.cells[index] = null;
-  $('area-feedback').className = 'feedback-area';
-  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
-  renderAreaGrid();
-  renderAreaTiles();
-}
-
-function checkAreaAnswer() {
-  const { cells, p, q } = state.area;
-  const isCorrect =
-    (cells[0] === 'x2' && cells[1] === 'px' && cells[2] === 'qx' && cells[3] === 'pq') ||
-    (cells[0] === 'x2' && cells[1] === 'qx' && cells[2] === 'px' && cells[3] === 'pq');
-
-  if (isCorrect) {
-    state.area.solved = true;
-    state.correct++;
-    state.total++;
-    state.streak++;
-    state.isFirstProblem.area = false;
-    updateStats();
-
-    if (cells[1] === 'qx') {
-      state.area.p = q;
-      state.area.q = p;
-    }
-
-    renderAreaGrid();
-    renderAreaTiles();
-
-    const dp = state.area.p;
-    const dq = state.area.q;
-    $('area-result').textContent = formatFactor(1, dp) + formatFactor(1, dq);
-    $('area-result').className = 'result-display show';
-    $('area-feedback').className = 'feedback-area correct';
-    $('area-feedback').innerHTML = '🎉 正解！ 長方形の辺が因数だ！<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
-    $('area-next-btn').classList.remove('hidden');
-    $('area-reset-btn').classList.add('hidden');
-
-    setTimeout(() => {
-      $('area-next-btn').classList.add('hint-pulse');
-    }, 800);
-
-    showConfetti();
-    showStreakPopup();
-  } else {
-    state.total++;
-    state.streak = 0;
-    updateStats();
-
-    let hint = '';
-    if (cells[0] !== 'x2') {
-      hint = '💡 左上のマスには x² が入るよ（面積の一番大きいパーツ）。タイルをタップすると外せるよ！';
-    } else if (cells[3] === 'x2' || (cells[3] && state.area.tiles.find(t => t.value === cells[3])?.label.includes('x'))) {
-      hint = '💡 右下のマスには数字だけのタイルが入るよ。xが付いているタイルは真ん中の2マスに！';
-    } else if (cells[3] !== 'pq') {
-      hint = `💡 右下の数字が違うかも。かけて ${p * q} になる組み合わせを探してみよう！`;
-    } else {
-      hint = '💡 真ん中の2マスにはxの項を置こう。上の行と左の列の掛け算になるよ！';
-    }
-
-    $('area-feedback').className = 'feedback-area wrong';
-    $('area-feedback').innerHTML = hint;
-
-    document.querySelectorAll('.area-cell.filled').forEach(c => {
-      c.classList.add('wrong-cell');
-      setTimeout(() => c.classList.remove('wrong-cell'), 600);
-    });
-  }
-}
-
-$('area-reset-btn').addEventListener('click', () => {
-  if (state.area.solved) return;
-  state.area.cells = [null, null, null, null];
-  state.area.selectedTile = null;
-  $('area-feedback').className = 'feedback-area';
-  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
-  renderAreaGrid();
-  renderAreaTiles();
-});
-
-$('area-next-btn').addEventListener('click', () => {
-  $('area-next-btn').classList.remove('hint-pulse');
-  newAreaProblem();
-});
-
-// ================================================================
-//  MODE 3: COMMON FACTOR BUNDLE
-// ================================================================
-function newCommonProblem() {
-  clearAllHints();
-  const type = pick(['number', 'withX']);
-  let k, a, b, terms, kLabel, innerTerms, expression;
-
-  if (state.isFirstProblem.common) {
-    // Easy first problem: 6x + 9 = 3(2x + 3)
-    k = 3; a = 2; b = 3;
-    terms = [
-      { coef: 6, varPart: 'x', display: '6x' },
-      { coef: 9, varPart: '', display: '9' }
-    ];
-    kLabel = '3';
-    innerTerms = ['2x', '3'];
-    expression = '6x + 9';
-  } else if (type === 'number') {
-    k = pick([2, 3, 4, 5, 6]);
-    a = pick([1, 2, 3]);
-    b = pick([1, 2, 3, 4, 5].filter(x => gcd(x, a) === 1 || a === 1));
-    terms = [
-      { coef: k * a, varPart: 'x', display: formatTerm(k * a, 'x') },
-      { coef: k * b, varPart: '', display: String(k * b) }
-    ];
-    kLabel = String(k);
-    innerTerms = [formatTerm(a, 'x'), String(b)];
-    expression = formatTerm(k * a, 'x') + (k * b > 0 ? ' + ' : ' \u2212 ') + Math.abs(k * b);
-  } else {
-    k = pick([2, 3, 4, 5]);
-    a = pick([1, 2, 3]);
-    b = pick([1, 2, 3, 4, 5]);
-    terms = [
-      { coef: k * a, varPart: 'x\u00B2', display: formatTerm(k * a, 'x\u00B2') },
-      { coef: k * b, varPart: 'x', display: formatTerm(k * b, 'x') }
-    ];
-    kLabel = k + 'x';
-    innerTerms = [formatTerm(a, 'x'), String(b)];
-    expression = formatTerm(k * a, 'x\u00B2') + ' + ' + formatTerm(k * b, 'x');
-  }
-
-  const options = new Set();
-  options.add(kLabel);
-  if (type === 'number' || state.isFirstProblem.common) {
-    options.add(String(k + 1));
-    options.add(String(Math.max(1, k - 1)));
-    if (k !== 2) options.add('2');
-    options.add('x');
-    options.add(k + 'x');
-  } else {
-    options.add(String(k));
-    options.add('x');
-    options.add((k + 1) + 'x');
-    if (k !== 2) options.add('2x');
-    options.add(String(k * 2));
-  }
-
-  const factorOptions = shuffle([...options].slice(0, 6));
-
-  state.common = {
-    k, kLabel, type: state.isFirstProblem.common ? 'number' : type,
-    terms, innerTerms, expression,
-    selectedFactor: null, solved: false, factorOptions,
-    answer: kLabel + '(' + innerTerms.join(' + ') + ')'
-  };
-
-  $('common-expr').textContent = expression;
-  $('common-instruction').innerHTML = '共通因数を1つ選んで「これでくくる！」を押そう';
-  $('common-result').className = 'result-display';
-  $('common-result').textContent = '';
-  $('common-feedback').className = 'feedback-area';
-  $('common-preview').textContent = '';
-  $('common-preview').className = 'factor-preview';
-  $('common-confirm-btn').classList.add('hidden');
-  $('common-next-btn').classList.add('hidden');
-
-  renderCommonTerms(false);
-  renderCommonFactors();
-
-  // Hints for first problem
-  if (state.isFirstProblem.common) {
-    addPulseHint('.factor-btn', 800);
-  }
-}
-
-function gcd(a, b) {
-  a = Math.abs(a); b = Math.abs(b);
-  while (b) { [a, b] = [b, a % b]; }
-  return a;
-}
-
-function renderCommonTerms(factored) {
-  const container = $('common-terms');
-  container.innerHTML = '';
-
-  const terms = state.common.terms;
-  terms.forEach((term, i) => {
-    const card = document.createElement('div');
-    card.className = 'term-card' + (factored ? ' factored' : '');
-    card.textContent = factored ? state.common.innerTerms[i] : term.display;
-    if (i < terms.length - 1) {
-      const plus = document.createElement('span');
-      plus.className = 'plus-sign';
-      plus.textContent = '+';
-      card.appendChild(plus);
-    }
-    container.appendChild(card);
-  });
-}
-
-function renderCommonFactors() {
-  const container = $('common-factors');
-  container.innerHTML = '';
-
-  state.common.factorOptions.forEach(f => {
-    const btn = document.createElement('button');
-    btn.className = 'factor-btn';
-    if (state.common.selectedFactor === f) btn.classList.add('selected');
-    btn.textContent = f;
-    btn.addEventListener('click', () => selectFactor(f));
-    container.appendChild(btn);
-  });
-}
-
-function selectFactor(f) {
-  if (state.common.solved) return;
-  clearAllHints();
-  state.common.selectedFactor = f;
-  renderCommonFactors();
-
-  $('common-preview').textContent = f + '( ? )';
-  $('common-preview').className = 'factor-preview show';
-  $('common-confirm-btn').classList.remove('hidden');
-
-  // Pulse the confirm button
-  setTimeout(() => {
-    $('common-confirm-btn').classList.add('hint-pulse');
-  }, 300);
-
-  $('common-instruction').innerHTML = '👇「これでくくる！」を押して確定しよう';
-}
-
-$('common-confirm-btn').addEventListener('click', () => {
-  const { selectedFactor, kLabel, innerTerms, terms, type, k } = state.common;
-  if (!selectedFactor || state.common.solved) return;
-
-  $('common-confirm-btn').classList.remove('hint-pulse');
-
-  if (selectedFactor === kLabel) {
-    state.common.solved = true;
-    state.correct++;
-    state.total++;
-    state.streak++;
-    state.isFirstProblem.common = false;
-    updateStats();
-
-    document.querySelectorAll('.factor-btn').forEach(b => {
-      if (b.textContent === kLabel) {
-        b.classList.add('correct-factor');
-      }
-    });
-
-    renderCommonTerms(true);
-
-    const answer = kLabel + '(' + innerTerms.join(' + ') + ')';
-    $('common-result').textContent = answer;
-    $('common-result').className = 'result-display show';
-    $('common-preview').textContent = answer;
-    $('common-preview').className = 'factor-preview show';
-    $('common-feedback').className = 'feedback-area correct';
-    $('common-feedback').innerHTML = '🎉 正解！ 共通因数をくくり出せた！<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
-    $('common-confirm-btn').classList.add('hidden');
-    $('common-next-btn').classList.remove('hidden');
-
-    setTimeout(() => {
-      $('common-next-btn').classList.add('hint-pulse');
-    }, 800);
-
-    showConfetti();
-    showStreakPopup();
-  } else {
-    state.total++;
-    state.streak = 0;
-    updateStats();
-
-    document.querySelectorAll('.factor-btn.selected').forEach(b => {
-      b.classList.remove('selected');
-      b.classList.add('wrong-factor');
-      setTimeout(() => b.classList.remove('wrong-factor'), 600);
-    });
-
-    let reason = '';
-    const sf = selectedFactor;
-
-    if (type === 'number') {
-      const c1 = terms[0].coef;
-      const c2 = terms[1].coef;
-      const fNum = parseInt(sf);
-      if (!isNaN(fNum)) {
-        if (c1 % fNum !== 0 || c2 % fNum !== 0) {
-          const badTerm = c1 % fNum !== 0 ? terms[0].display : terms[1].display;
-          reason = `❌ ${badTerm} は ${sf} で割り切れないよ<br>💡 ${c1} と ${c2} の両方を割り切れる数は？`;
-        } else {
-          reason = `⚠️ ${sf} でもくくれるけど、もっと大きい共通因数があるよ！<br>💡 ${c1} と ${c2} の最大公約数を探してみよう`;
-        }
-      } else if (sf.includes('x')) {
-        reason = `❌ 定数の項 ${terms[1].display} には x が含まれないから、x ではくくれないよ<br>💡 数字だけの共通因数を探そう`;
-      }
-    } else {
-      if (sf === String(k)) {
-        reason = `⚠️ ${sf} でもくくれるけど、x も共通因数だよ！<br>💡 ${kLabel} でくくってみよう`;
-      } else if (sf === 'x') {
-        reason = `⚠️ x は共通因数だけど、係数 ${k} も共通因数だよ！<br>💡 数字と x をまとめて ${kLabel} でくくろう`;
-      } else {
-        const fNum = parseInt(sf);
-        if (!isNaN(fNum) && sf.includes('x')) {
-          reason = `❌ すべての項を ${sf} で割り切れるか確認してみよう<br>💡 各項の係数と文字の両方をチェック！`;
-        } else {
-          reason = `❌ すべての項を ${sf} で割り切れるか確認してみよう<br>💡 各項を ${sf} で割ってみて！`;
-        }
-      }
-    }
-
-    $('common-feedback').className = 'feedback-area wrong';
-    $('common-feedback').innerHTML = reason;
-
-    state.common.selectedFactor = null;
-    renderCommonFactors();
-    $('common-confirm-btn').classList.add('hidden');
-    $('common-preview').textContent = '';
+// ========== Buttons ==========
+$('reset-btn').addEventListener('click', () => {
+  if (state.solved) return;
+  state.selected.forEach(s => s.btn.classList.remove('selected'));
+  state.selected = [];
+  $('status').innerHTML = '\u6570\u5B57\u30922\u3064\u30BF\u30C3\u30D7\u3057\u3088\u3046';
+  if (state.tutorialStep === 0) {
+    $('feedback').className = 'feedback';
+    $('feedback').textContent = '';
   }
 });
 
-$('common-next-btn').addEventListener('click', () => {
-  $('common-next-btn').classList.remove('hint-pulse');
-  newCommonProblem();
-});
-
-// ========== Event Listeners ==========
-
-// Start screen mode cards
-document.querySelectorAll('.mode-card').forEach(card => {
-  card.addEventListener('click', () => startMode(card.dataset.start));
-});
-
-// Mode tabs
-document.querySelectorAll('.mode-tab').forEach(tab => {
-  tab.addEventListener('click', () => startMode(tab.dataset.mode));
+$('next-btn').addEventListener('click', () => {
+  $('next-btn').classList.remove('hint-pulse');
+  newProblem();
 });
 
 // ========== Init ==========
-// Show tutorial on first visit
-if (!isTutorialDone()) {
-  showTutorial();
-}
-
+if (!isTutorialDone()) showTutorial();
+newProblem();
 </script>
 </body>
 </html>
