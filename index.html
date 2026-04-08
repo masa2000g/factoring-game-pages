@@ -665,6 +665,259 @@
 
     .fade-in-up { animation: fadeInUp 0.4s ease; }
 
+    /* === Tutorial Overlay === */
+    .tutorial-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .tutorial-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px 20px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 -4px 30px rgba(0,0,0,0.2);
+      animation: slideUp 0.4s ease;
+      margin-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .tutorial-card .tutorial-step-indicator {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .tutorial-card h3 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .tutorial-card p {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .tutorial-card .tutorial-demo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .tutorial-card .tutorial-demo .demo-bubble {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: 2px solid #e0e0e0;
+      background: #fff;
+      transition: all 0.3s;
+    }
+
+    .tutorial-card .tutorial-demo .demo-bubble.demo-selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    .tutorial-card .tutorial-demo .demo-tile {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      background: #fff;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .tutorial-card .tutorial-demo .demo-tile.demo-selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .tutorial-card .tutorial-demo .demo-cell {
+      width: 50px;
+      height: 40px;
+      border: 2px dashed #d0d0d0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .tutorial-card .tutorial-demo .demo-cell.demo-filled {
+      background: var(--primary-light);
+      color: #fff;
+      border-style: solid;
+      border-color: var(--primary);
+    }
+
+    .tutorial-card .tutorial-demo .demo-arrow {
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    .tutorial-card .tutorial-demo .demo-factor-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      background: #fff;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .tutorial-card .tutorial-demo .demo-factor-btn.demo-selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .tutorial-btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .tutorial-btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tutorial-btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .tutorial-btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .tutorial-btn-skip {
+      background: transparent;
+      color: var(--text-light);
+    }
+
+    /* === Pulse highlight for interactive elements === */
+    @keyframes pulse-hint {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(108, 92, 231, 0); }
+    }
+
+    .hint-pulse {
+      animation: pulse-hint 1.5s ease-in-out infinite;
+    }
+
+    /* === Tap hand indicator === */
+    .tap-hand {
+      position: absolute;
+      font-size: 1.6rem;
+      pointer-events: none;
+      z-index: 100;
+      animation: tapBounce 1.2s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    @keyframes tapBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.1); }
+    }
+
+    /* === Step label on game elements === */
+    .step-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      animation: popIn 0.3s ease;
+    }
+
+    /* === Mode intro banner === */
+    .mode-intro {
+      text-align: center;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: #fff;
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.5;
+      animation: fadeInUp 0.4s ease;
+    }
+
+    /* === Success next action === */
+    .success-next {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    .success-next .arrow-bounce {
+      display: inline-block;
+      animation: arrowBounce 1s ease-in-out infinite;
+    }
+
+    @keyframes arrowBounce {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(4px); }
+    }
+
     /* === Footer === */
     footer {
       text-align: center;
@@ -726,27 +979,27 @@
     <!-- ===== Start Screen ===== -->
     <div id="start-screen" class="game-card start-screen">
       <h2>パズルで因数分解を体感しよう！</h2>
-      <p>タイルを操作して、ペアを見つけて、<br>共通因数をくくり出す3つのモード</p>
+      <p>タップだけで遊べる3つのモード。<br>まずは好きなモードを選んでスタート！</p>
       <div class="mode-cards">
         <div class="mode-card" data-start="pair">
           <div class="icon">🔍</div>
           <div class="info">
             <h3>ペアファインダー</h3>
-            <p>かけて c、たして b になる数のペアを見つけよう。和と積の感覚が身につく！</p>
+            <p>数字を2つタップ！ かけ算とたし算が合うペアを探そう</p>
           </div>
         </div>
         <div class="mode-card" data-start="area">
           <div class="icon">🧩</div>
           <div class="info">
             <h3>面積パズル</h3>
-            <p>タイルを長方形に並べて因数分解を完成させよう。面積モデルが直感でわかる！</p>
+            <p>タイルを選んでマスに配置！ 長方形を完成させよう</p>
           </div>
         </div>
         <div class="mode-card" data-start="common">
           <div class="icon">🎯</div>
           <div class="info">
             <h3>共通因数バンドル</h3>
-            <p>共通因数を選んでくくり出そう。共通因数の抽出がクセになる！</p>
+            <p>共通因数を1つ選んでボタンを押すだけ！</p>
           </div>
         </div>
       </div>
@@ -754,26 +1007,32 @@
 
     <!-- ===== Pair Finder Mode ===== -->
     <div id="pair-game" class="game-card hidden">
+      <div id="pair-mode-intro" class="mode-intro hidden">
+        👆 数字を2つタップして、かけ算とたし算が合うペアを見つけよう
+      </div>
       <div class="expression" id="pair-expr"></div>
       <div class="instruction" id="pair-instruction"></div>
       <div class="target-info">
         <div class="target-badge" id="pair-product">かけて ?</div>
         <div class="target-badge" id="pair-sum">たして ?</div>
       </div>
-      <div class="pair-status" id="pair-status">数字を2つ選ぼう</div>
+      <div class="pair-status" id="pair-status">数字を2つタップしよう 👆</div>
       <div class="number-grid" id="pair-grid"></div>
       <div class="result-display" id="pair-result"></div>
       <div class="feedback-area" id="pair-feedback"></div>
       <div class="btn-row">
         <button class="btn btn-secondary" id="pair-reset-btn">選び直す</button>
-        <button class="btn btn-primary hidden" id="pair-next-btn">次の問題</button>
+        <button class="btn btn-primary hidden" id="pair-next-btn">次の問題 →</button>
       </div>
     </div>
 
     <!-- ===== Area Model Mode ===== -->
     <div id="area-game" class="game-card hidden">
+      <div id="area-mode-intro" class="mode-intro hidden">
+        ① 下のタイルをタップ → ② 上のマスをタップで配置！
+      </div>
       <div class="expression" id="area-expr"></div>
-      <div class="instruction">タイルを選んでマスに置こう（タップで選択→マスに配置）</div>
+      <div class="instruction" id="area-instruction">① タイルをタップで選択 → ② マスをタップで配置</div>
       <div class="area-grid-wrapper">
         <div class="area-grid" id="area-grid"></div>
       </div>
@@ -782,14 +1041,17 @@
       <div class="feedback-area" id="area-feedback"></div>
       <div class="btn-row">
         <button class="btn btn-secondary" id="area-reset-btn">やり直す</button>
-        <button class="btn btn-primary hidden" id="area-next-btn">次の問題</button>
+        <button class="btn btn-primary hidden" id="area-next-btn">次の問題 →</button>
       </div>
     </div>
 
     <!-- ===== Common Factor Mode ===== -->
     <div id="common-game" class="game-card hidden">
+      <div id="common-mode-intro" class="mode-intro hidden">
+        👇 すべての項を割り切れる最大の共通因数を選んで「くくる！」
+      </div>
       <div class="expression" id="common-expr"></div>
-      <div class="instruction">共通因数を選んでくくり出そう</div>
+      <div class="instruction" id="common-instruction">共通因数を1つ選んで「これでくくる！」を押そう</div>
       <div class="terms-display" id="common-terms"></div>
       <div class="factor-options" id="common-factors"></div>
       <div class="factor-preview" id="common-preview"></div>
@@ -797,7 +1059,7 @@
       <div class="feedback-area" id="common-feedback"></div>
       <div class="btn-row">
         <button class="btn btn-primary hidden" id="common-confirm-btn">これでくくる！</button>
-        <button class="btn btn-primary hidden" id="common-next-btn">次の問題</button>
+        <button class="btn btn-primary hidden" id="common-next-btn">次の問題 →</button>
       </div>
     </div>
 
@@ -855,12 +1117,226 @@ function formatFactor(a, b) {
   return '(' + s + ')';
 }
 
+// ========== Tutorial System ==========
+const TUTORIAL_KEY = 'factoring-master-tutorial-done';
+const TUTORIAL_MODE_KEY = 'factoring-master-mode-intros';
+
+function isTutorialDone() {
+  return localStorage.getItem(TUTORIAL_KEY) === 'true';
+}
+
+function markTutorialDone() {
+  localStorage.setItem(TUTORIAL_KEY, 'true');
+}
+
+function isModeIntroDone(mode) {
+  try {
+    const data = JSON.parse(localStorage.getItem(TUTORIAL_MODE_KEY) || '{}');
+    return data[mode] === true;
+  } catch { return false; }
+}
+
+function markModeIntroDone(mode) {
+  try {
+    const data = JSON.parse(localStorage.getItem(TUTORIAL_MODE_KEY) || '{}');
+    data[mode] = true;
+    localStorage.setItem(TUTORIAL_MODE_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+// Tutorial steps for first-time users
+const tutorialSteps = [
+  {
+    title: 'ようこそ！',
+    body: 'タップだけで因数分解が学べるパズルゲームです。<br>3つのモードを順番に紹介します！',
+    demo: null,
+  },
+  {
+    title: '🔍 ペアファインダー',
+    body: '<b>数字を2つタップ</b>するだけ！<br>「かけて○、たして○」になるペアを見つけよう。',
+    demo: 'pair',
+  },
+  {
+    title: '🧩 面積パズル',
+    body: '<b>①タイルをタップ → ②マスをタップ</b>で配置！<br>4つのマスを埋めて長方形を完成させよう。',
+    demo: 'area',
+  },
+  {
+    title: '🎯 共通因数バンドル',
+    body: '<b>共通因数を1つ選んで</b>「くくる！」ボタン。<br>全部の項を割り切れる最大の数を見つけよう。',
+    demo: 'common',
+  },
+  {
+    title: 'さっそく始めよう！',
+    body: '最初は<b>ペアファインダー</b>がおすすめ。<br>間違えても大丈夫、ヒントが出るよ！',
+    demo: null,
+  },
+];
+
+let currentTutorialStep = 0;
+
+function showTutorial() {
+  currentTutorialStep = 0;
+  renderTutorialStep();
+}
+
+function renderTutorialStep() {
+  // Remove existing overlay
+  const existing = document.querySelector('.tutorial-overlay');
+  if (existing) existing.remove();
+
+  if (currentTutorialStep >= tutorialSteps.length) {
+    markTutorialDone();
+    return;
+  }
+
+  const step = tutorialSteps[currentTutorialStep];
+  const total = tutorialSteps.length;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'tutorial-overlay';
+
+  let demoHTML = '';
+  if (step.demo === 'pair') {
+    demoHTML = `
+      <div class="tutorial-demo" id="tutorial-demo-pair">
+        <div class="demo-bubble" id="td-b1">3</div>
+        <div class="demo-bubble" id="td-b2">5</div>
+        <div class="demo-arrow">→</div>
+        <span style="font-size:0.85rem;color:var(--success);font-weight:700">3×5=15 ✓</span>
+      </div>`;
+  } else if (step.demo === 'area') {
+    demoHTML = `
+      <div class="tutorial-demo" id="tutorial-demo-area">
+        <div class="demo-tile" id="td-t1">x²</div>
+        <div class="demo-arrow">→</div>
+        <div class="demo-cell" id="td-c1"></div>
+        <div class="demo-arrow">→</div>
+        <div class="demo-cell demo-filled">x²</div>
+      </div>`;
+  } else if (step.demo === 'common') {
+    demoHTML = `
+      <div class="tutorial-demo" id="tutorial-demo-common">
+        <div class="demo-factor-btn" id="td-f1">3</div>
+        <div class="demo-factor-btn demo-selected" id="td-f2">3x</div>
+        <div class="demo-factor-btn" id="td-f3">x</div>
+        <div class="demo-arrow">→</div>
+        <span style="font-size:0.85rem;font-weight:700;color:var(--primary)">3x(…)</span>
+      </div>`;
+  }
+
+  overlay.innerHTML = `
+    <div class="tutorial-card">
+      <div class="tutorial-step-indicator">${currentTutorialStep + 1} / ${total}</div>
+      <h3>${step.title}</h3>
+      <p>${step.body}</p>
+      ${demoHTML}
+      <div class="tutorial-btn-row">
+        ${currentTutorialStep > 0 ? '<button class="tutorial-btn tutorial-btn-skip" id="tutorial-skip">スキップ</button>' : '<button class="tutorial-btn tutorial-btn-skip" id="tutorial-skip">スキップ</button>'}
+        <button class="tutorial-btn tutorial-btn-primary" id="tutorial-next">
+          ${currentTutorialStep < total - 1 ? '次へ →' : 'はじめる！'}
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  // Animate demo elements
+  if (step.demo === 'pair') {
+    setTimeout(() => {
+      const b1 = document.getElementById('td-b1');
+      const b2 = document.getElementById('td-b2');
+      if (b1) b1.classList.add('demo-selected');
+      setTimeout(() => { if (b2) b2.classList.add('demo-selected'); }, 400);
+    }, 500);
+  } else if (step.demo === 'area') {
+    setTimeout(() => {
+      const t1 = document.getElementById('td-t1');
+      if (t1) t1.classList.add('demo-selected');
+      setTimeout(() => {
+        const c1 = document.getElementById('td-c1');
+        if (c1) { c1.classList.add('demo-filled'); c1.textContent = 'x²'; }
+      }, 600);
+    }, 500);
+  }
+
+  document.getElementById('tutorial-next').addEventListener('click', () => {
+    currentTutorialStep++;
+    renderTutorialStep();
+  });
+
+  document.getElementById('tutorial-skip').addEventListener('click', () => {
+    overlay.remove();
+    markTutorialDone();
+  });
+
+  // Close on overlay background click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      currentTutorialStep++;
+      renderTutorialStep();
+    }
+  });
+}
+
+// ========== Visual Hints ==========
+let hintTimers = [];
+
+function clearAllHints() {
+  hintTimers.forEach(t => clearTimeout(t));
+  hintTimers = [];
+  document.querySelectorAll('.hint-pulse').forEach(el => el.classList.remove('hint-pulse'));
+  document.querySelectorAll('.tap-hand').forEach(el => el.remove());
+  document.querySelectorAll('.step-badge').forEach(el => el.remove());
+}
+
+function addPulseHint(selector, delay) {
+  const timer = setTimeout(() => {
+    document.querySelectorAll(selector).forEach(el => {
+      el.classList.add('hint-pulse');
+    });
+  }, delay || 1500);
+  hintTimers.push(timer);
+}
+
+function addTapHand(targetEl) {
+  if (!targetEl) return;
+  const hand = document.createElement('div');
+  hand.className = 'tap-hand';
+  hand.textContent = '👆';
+  hand.style.bottom = '-10px';
+  hand.style.right = '-10px';
+  targetEl.style.position = 'relative';
+  targetEl.appendChild(hand);
+}
+
+function showModeIntro(mode) {
+  const introId = mode + '-mode-intro';
+  const introEl = $(introId);
+  if (!introEl) return;
+
+  if (!isModeIntroDone(mode)) {
+    introEl.classList.remove('hidden');
+    markModeIntroDone(mode);
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      introEl.style.transition = 'opacity 0.3s';
+      introEl.style.opacity = '0';
+      setTimeout(() => {
+        introEl.classList.add('hidden');
+        introEl.style.opacity = '';
+      }, 300);
+    }, 5000);
+  }
+}
+
 // ========== Game State ==========
 const state = {
   mode: null,
   correct: 0,
   total: 0,
   streak: 0,
+  isFirstProblem: { pair: true, area: true, common: true },
   // Pair finder
   pair: { p: 0, q: 0, b: 0, c: 0, selected: [], solved: false },
   // Area model
@@ -923,6 +1399,8 @@ function startMode(mode) {
     t.classList.toggle('active', t.dataset.mode === mode);
   });
 
+  showModeIntro(mode);
+
   if (mode === 'pair') { showScreen('pair-game'); newPairProblem(); }
   else if (mode === 'area') { showScreen('area-game'); newAreaProblem(); }
   else if (mode === 'common') { showScreen('common-game'); newCommonProblem(); }
@@ -930,15 +1408,20 @@ function startMode(mode) {
 
 // ================================================================
 //  MODE 1: PAIR FINDER
-//  Find two numbers whose product = c and sum = b
-//  for x² + bx + c = (x+p)(x+q)
 // ================================================================
 function newPairProblem() {
+  clearAllHints();
   let p, q;
-  do {
-    p = randInt(-9, 9);
-    q = randInt(-9, 9);
-  } while (p === 0 || q === 0 || p * q === 0 || Math.abs(p * q) > 30);
+  // First problem is easier (small positive numbers)
+  if (state.isFirstProblem.pair) {
+    p = pick([2, 3]);
+    q = pick([4, 5]);
+  } else {
+    do {
+      p = randInt(-9, 9);
+      q = randInt(-9, 9);
+    } while (p === 0 || q === 0 || p * q === 0 || Math.abs(p * q) > 30);
+  }
 
   const b = p + q;
   const c = p * q;
@@ -946,10 +1429,10 @@ function newPairProblem() {
   state.pair = { p, q, b, c, selected: [], solved: false };
 
   $('pair-expr').textContent = formatPoly(1, b, c);
-  $('pair-instruction').textContent = 'かけて ' + c + '、たして ' + b + ' になる2つの数を見つけよう';
+  $('pair-instruction').innerHTML = `<b>かけて ${c}</b>、<b>たして ${b}</b> になる2つの数を見つけよう`;
   $('pair-product').textContent = 'かけて ' + c;
   $('pair-sum').textContent = 'たして ' + b;
-  $('pair-status').innerHTML = '数字を2つ選ぼう';
+  $('pair-status').innerHTML = '数字を2つタップしよう 👆';
   $('pair-result').className = 'result-display';
   $('pair-result').textContent = '';
   $('pair-feedback').className = 'feedback-area';
@@ -957,21 +1440,18 @@ function newPairProblem() {
   $('pair-next-btn').classList.add('hidden');
   $('pair-reset-btn').classList.remove('hidden');
 
-  // Build number grid: include correct answers + distractors
+  // Build number grid
   const numbers = new Set([p, q]);
-  // Add some related distractors
   if (Math.abs(c) <= 20) {
     for (let i = -9; i <= 9; i++) {
       if (i !== 0) numbers.add(i);
     }
   }
-  // Ensure we have a nice set of numbers
   while (numbers.size < 15) {
     numbers.add(randInt(-9, 9) || 1);
   }
 
   const numArr = shuffle([...numbers].filter(n => n !== 0).slice(0, 15));
-  // Make sure p and q are included
   if (!numArr.includes(p)) numArr[0] = p;
   if (!numArr.includes(q)) numArr[1] = q;
   const finalNums = shuffle(numArr);
@@ -986,14 +1466,31 @@ function newPairProblem() {
     btn.addEventListener('click', () => selectPairNumber(n, btn));
     grid.appendChild(btn);
   });
+
+  // Show hints for first problem
+  if (state.isFirstProblem.pair) {
+    addPulseHint('.num-btn', 800);
+    // Find and highlight the correct answer buttons
+    setTimeout(() => {
+      const buttons = grid.querySelectorAll('.num-btn');
+      let count = 0;
+      buttons.forEach(btn => {
+        const val = parseInt(btn.dataset.value);
+        if ((val === p || val === q) && count < 2) {
+          addTapHand(btn);
+          count++;
+        }
+      });
+    }, 2000);
+  }
 }
 
 function selectPairNumber(n, btn) {
   if (state.pair.solved) return;
+  clearAllHints();
 
   const sel = state.pair.selected;
 
-  // If already selected, deselect
   if (btn.classList.contains('selected')) {
     btn.classList.remove('selected');
     state.pair.selected = sel.filter(s => s.btn !== btn);
@@ -1016,14 +1513,14 @@ function selectPairNumber(n, btn) {
 function updatePairStatus() {
   const sel = state.pair.selected;
   if (sel.length === 0) {
-    $('pair-status').innerHTML = '数字を2つ選ぼう';
+    $('pair-status').innerHTML = '数字を2つタップしよう 👆';
   } else if (sel.length === 1) {
-    $('pair-status').innerHTML = `<strong>${sel[0].value}</strong> を選択中… もう1つ選ぼう`;
+    $('pair-status').innerHTML = `<strong>${sel[0].value}</strong> を選択中… もう1つタップ！`;
   }
 }
 
 function checkPairAnswer() {
-  const { b, c, selected } = state.pair;
+  const { b, c, selected, p, q } = state.pair;
   const v1 = selected[0].value;
   const v2 = selected[1].value;
   const product = v1 * v2;
@@ -1040,11 +1537,11 @@ function checkPairAnswer() {
     `<span class="pair-calc ${sumClass}">${v1} + ${v2} = ${sum}</span>`;
 
   if (productOk && sumOk) {
-    // Correct!
     state.pair.solved = true;
     state.correct++;
     state.total++;
     state.streak++;
+    state.isFirstProblem.pair = false;
     updateStats();
 
     selected.forEach(s => {
@@ -1055,19 +1552,21 @@ function checkPairAnswer() {
       if (!b.classList.contains('correct-anim')) b.classList.add('disabled');
     });
 
-    const p = state.pair.p;
-    const q = state.pair.q;
     $('pair-result').textContent = formatFactor(1, p) + formatFactor(1, q);
     $('pair-result').className = 'result-display show';
     $('pair-feedback').className = 'feedback-area correct';
-    $('pair-feedback').textContent = '正解！ ペアを見つけた！';
+    $('pair-feedback').innerHTML = '🎉 正解！ ペアを見つけた！<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
     $('pair-next-btn').classList.remove('hidden');
     $('pair-reset-btn').classList.add('hidden');
+
+    // Pulse the next button
+    setTimeout(() => {
+      $('pair-next-btn').classList.add('hint-pulse');
+    }, 800);
 
     showConfetti();
     showStreakPopup();
   } else {
-    // Wrong
     state.total++;
     state.streak = 0;
     updateStats();
@@ -1076,14 +1575,14 @@ function checkPairAnswer() {
 
     let reason = '';
     if (!productOk && !sumOk) {
-      reason = `${v1}×${v2}=${product}（${c}が必要）、${v1}+${v2}=${sum}（${b}が必要）`;
+      reason = `❌ かけ算: ${v1}×${v2}=${product}（${c}が必要）<br>❌ たし算: ${v1}+${v2}=${sum}（${b}が必要）<br>💡 まず「かけて${c}」になるペアを探してみよう`;
     } else if (!productOk) {
-      reason = `たし算は合ってる！ でも ${v1}×${v2}=${product}（${c}が必要）`;
+      reason = `✅ たし算は合ってる！ でも ${v1}×${v2}=${product}（${c}が必要）<br>💡 かけて${c}になる組み合わせは？`;
     } else {
-      reason = `かけ算は合ってる！ でも ${v1}+${v2}=${sum}（${b}が必要）`;
+      reason = `✅ かけ算は合ってる！ でも ${v1}+${v2}=${sum}（${b}が必要）<br>💡 ${c}の約数の中で、たして${b}になるペアは？`;
     }
     $('pair-feedback').className = 'feedback-area wrong';
-    $('pair-feedback').textContent = reason;
+    $('pair-feedback').innerHTML = reason;
 
     setTimeout(() => {
       selected.forEach(s => {
@@ -1098,28 +1597,28 @@ $('pair-reset-btn').addEventListener('click', () => {
   if (state.pair.solved) return;
   state.pair.selected.forEach(s => s.btn.classList.remove('selected'));
   state.pair.selected = [];
-  $('pair-status').innerHTML = '数字を2つ選ぼう';
+  $('pair-status').innerHTML = '数字を2つタップしよう 👆';
   $('pair-feedback').className = 'feedback-area';
 });
 
-$('pair-next-btn').addEventListener('click', newPairProblem);
+$('pair-next-btn').addEventListener('click', () => {
+  $('pair-next-btn').classList.remove('hint-pulse');
+  newPairProblem();
+});
 
 // ================================================================
 //  MODE 2: AREA MODEL PUZZLE
-//  Place tiles in a 2×2 grid to build (x+p)(x+q)
-//  Grid: x²  | px
-//        qx  | pq
 // ================================================================
 function newAreaProblem() {
+  clearAllHints();
   let p, q;
-  do {
-    p = randInt(1, 7);
-    q = randInt(1, 7);
-  } while (p === q && Math.random() < 0.5); // allow some p=q but not always
-
-  // Randomly swap sign occasionally for variety
-  if (Math.random() < 0.3 && p + q <= 10) {
-    // Keep both positive for area model (easier to visualize)
+  if (state.isFirstProblem.area) {
+    p = 2; q = 3; // Easy first problem
+  } else {
+    do {
+      p = randInt(1, 7);
+      q = randInt(1, 7);
+    } while (p === q && Math.random() < 0.5);
   }
 
   const b = p + q;
@@ -1137,8 +1636,10 @@ function newAreaProblem() {
   $('area-next-btn').classList.add('hidden');
   $('area-reset-btn').classList.remove('hidden');
 
-  // Build grid
-  // Correct tiles: x², px, qx, pq
+  // Update instruction
+  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
+
+  // Build tiles
   const correctTiles = [
     { label: 'x\u00B2', value: 'x2' },
     { label: formatTerm(p, 'x'), value: 'px', num: p },
@@ -1146,15 +1647,13 @@ function newAreaProblem() {
     { label: String(p * q), value: 'pq', num: p * q }
   ];
 
-  // Distractors
   const distractorValues = new Set();
-  distractorValues.add(p + q); // sum instead of product
+  distractorValues.add(p + q);
   distractorValues.add(p + 1);
   distractorValues.add(q + 1);
   if (p !== 1) distractorValues.add(p - 1);
 
   const distractors = [];
-  // Add 2-3 distractor x-tiles and number tiles
   const dNums = [...distractorValues].filter(d => d > 0 && d !== p && d !== q && d !== p * q);
   if (dNums.length > 0) {
     distractors.push({ label: formatTerm(dNums[0], 'x'), value: 'dx1', num: dNums[0] });
@@ -1162,7 +1661,6 @@ function newAreaProblem() {
   if (dNums.length > 1) {
     distractors.push({ label: String(dNums[1]), value: 'dn1', num: dNums[1] });
   }
-  // Always add at least one number distractor
   let dConst = p * q + pick([-2, -1, 1, 2]);
   if (dConst <= 0 || dConst === p * q) dConst = p * q + 3;
   distractors.push({ label: String(dConst), value: 'dn2', num: dConst });
@@ -1173,6 +1671,11 @@ function newAreaProblem() {
 
   renderAreaGrid();
   renderAreaTiles();
+
+  // Hints for first problem
+  if (state.isFirstProblem.area) {
+    addPulseHint('.tile', 800);
+  }
 }
 
 function renderAreaGrid() {
@@ -1180,12 +1683,10 @@ function renderAreaGrid() {
   const grid = $('area-grid');
   grid.innerHTML = '';
 
-  // Corner
   const corner = document.createElement('div');
   corner.className = 'area-corner';
   grid.appendChild(corner);
 
-  // Column headers
   const colH1 = document.createElement('div');
   colH1.className = 'area-header' + (solved ? ' revealed' : '');
   colH1.textContent = solved ? 'x' : '?';
@@ -1196,33 +1697,28 @@ function renderAreaGrid() {
   colH2.textContent = solved ? String(p) : '?';
   grid.appendChild(colH2);
 
-  // Row 1
   const rowH1 = document.createElement('div');
   rowH1.className = 'area-header' + (solved ? ' revealed' : '');
   rowH1.textContent = solved ? 'x' : '?';
   grid.appendChild(rowH1);
 
-  // Cell 0: x² (top-left)
-  const cell0 = createAreaCell(0);
-  grid.appendChild(cell0);
+  grid.appendChild(createAreaCell(0));
+  grid.appendChild(createAreaCell(1));
 
-  // Cell 1: px (top-right)
-  const cell1 = createAreaCell(1);
-  grid.appendChild(cell1);
-
-  // Row 2
   const rowH2 = document.createElement('div');
   rowH2.className = 'area-header' + (solved ? ' revealed' : '');
   rowH2.textContent = solved ? String(q) : '?';
   grid.appendChild(rowH2);
 
-  // Cell 2: qx (bottom-left)
-  const cell2 = createAreaCell(2);
-  grid.appendChild(cell2);
+  grid.appendChild(createAreaCell(2));
+  grid.appendChild(createAreaCell(3));
 
-  // Cell 3: pq (bottom-right)
-  const cell3 = createAreaCell(3);
-  grid.appendChild(cell3);
+  // Highlight empty cells when a tile is selected
+  if (!solved && state.area.selectedTile !== null) {
+    grid.querySelectorAll('.area-cell:not(.filled)').forEach(cell => {
+      cell.classList.add('hint-pulse');
+    });
+  }
 }
 
 function createAreaCell(index) {
@@ -1269,28 +1765,43 @@ function renderAreaTiles() {
 
 function selectAreaTile(value) {
   if (state.area.solved) return;
-  if (state.area.cells.includes(value)) return; // already used
+  if (state.area.cells.includes(value)) return;
+  clearAllHints();
 
   if (state.area.selectedTile === value) {
     state.area.selectedTile = null;
   } else {
     state.area.selectedTile = value;
   }
+  renderAreaGrid();
   renderAreaTiles();
+
+  // Update instruction when tile is selected
+  if (state.area.selectedTile !== null) {
+    $('area-instruction').innerHTML = '👆 マスをタップして配置しよう！';
+  } else {
+    $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
+  }
 }
 
 function placeInCell(index) {
   if (state.area.solved) return;
-  if (state.area.selectedTile === null) return;
+  if (state.area.selectedTile === null) {
+    // If no tile selected, hint the user
+    $('area-instruction').innerHTML = '⬇ まず下のタイルをタップして選ぼう！';
+    addPulseHint('.tile:not(.used)', 0);
+    return;
+  }
   if (state.area.cells[index] !== null) return;
 
   state.area.cells[index] = state.area.selectedTile;
   state.area.selectedTile = null;
 
+  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
+
   renderAreaGrid();
   renderAreaTiles();
 
-  // Check if all cells filled
   if (state.area.cells.every(c => c !== null)) {
     checkAreaAnswer();
   }
@@ -1300,13 +1811,13 @@ function removeFromCell(index) {
   if (state.area.solved) return;
   state.area.cells[index] = null;
   $('area-feedback').className = 'feedback-area';
+  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
   renderAreaGrid();
   renderAreaTiles();
 }
 
 function checkAreaAnswer() {
   const { cells, p, q } = state.area;
-  // Correct arrangement: [x2, px, qx, pq] or [x2, qx, px, pq]
   const isCorrect =
     (cells[0] === 'x2' && cells[1] === 'px' && cells[2] === 'qx' && cells[3] === 'pq') ||
     (cells[0] === 'x2' && cells[1] === 'qx' && cells[2] === 'px' && cells[3] === 'pq');
@@ -1316,11 +1827,10 @@ function checkAreaAnswer() {
     state.correct++;
     state.total++;
     state.streak++;
+    state.isFirstProblem.area = false;
     updateStats();
 
-    // Determine which arrangement was used for correct header display
     if (cells[1] === 'qx') {
-      // Swap p and q for display
       state.area.p = q;
       state.area.q = p;
     }
@@ -1333,9 +1843,13 @@ function checkAreaAnswer() {
     $('area-result').textContent = formatFactor(1, dp) + formatFactor(1, dq);
     $('area-result').className = 'result-display show';
     $('area-feedback').className = 'feedback-area correct';
-    $('area-feedback').textContent = '正解！ 長方形の辺が因数だ！';
+    $('area-feedback').innerHTML = '🎉 正解！ 長方形の辺が因数だ！<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
     $('area-next-btn').classList.remove('hidden');
     $('area-reset-btn').classList.add('hidden');
+
+    setTimeout(() => {
+      $('area-next-btn').classList.add('hint-pulse');
+    }, 800);
 
     showConfetti();
     showStreakPopup();
@@ -1344,20 +1858,20 @@ function checkAreaAnswer() {
     state.streak = 0;
     updateStats();
 
-    // Give specific feedback
     let hint = '';
     if (cells[0] !== 'x2') {
-      hint = '左上のマスには x\u00B2 が入るよ（面積の一番大きいパーツ）';
-    } else if (cells[3] === 'x2' || (cells[3] && cells[3].includes('x'))) {
-      hint = '右下は数字（定数）のタイルが入るよ';
+      hint = '💡 左上のマスには x² が入るよ（面積の一番大きいパーツ）。タイルをタップすると外せるよ！';
+    } else if (cells[3] === 'x2' || (cells[3] && state.area.tiles.find(t => t.value === cells[3])?.label.includes('x'))) {
+      hint = '💡 右下のマスには数字だけのタイルが入るよ。xが付いているタイルは真ん中の2マスに！';
+    } else if (cells[3] !== 'pq') {
+      hint = `💡 右下の数字が違うかも。かけて ${p * q} になる組み合わせを探してみよう！`;
     } else {
-      hint = '真ん中の2マスにはxの項を置こう。かけて右下の数になる組み合わせを探して！';
+      hint = '💡 真ん中の2マスにはxの項を置こう。上の行と左の列の掛け算になるよ！';
     }
 
     $('area-feedback').className = 'feedback-area wrong';
-    $('area-feedback').textContent = hint;
+    $('area-feedback').innerHTML = hint;
 
-    // Shake cells
     document.querySelectorAll('.area-cell.filled').forEach(c => {
       c.classList.add('wrong-cell');
       setTimeout(() => c.classList.remove('wrong-cell'), 600);
@@ -1370,26 +1884,38 @@ $('area-reset-btn').addEventListener('click', () => {
   state.area.cells = [null, null, null, null];
   state.area.selectedTile = null;
   $('area-feedback').className = 'feedback-area';
+  $('area-instruction').innerHTML = '① タイルをタップで選択 → ② マスをタップで配置';
   renderAreaGrid();
   renderAreaTiles();
 });
 
-$('area-next-btn').addEventListener('click', newAreaProblem);
+$('area-next-btn').addEventListener('click', () => {
+  $('area-next-btn').classList.remove('hint-pulse');
+  newAreaProblem();
+});
 
 // ================================================================
 //  MODE 3: COMMON FACTOR BUNDLE
-//  Select the GCF to factor out from terms
 // ================================================================
 function newCommonProblem() {
-  // Generate: k * (ax + b) or k * x * (ax + b)
+  clearAllHints();
   const type = pick(['number', 'withX']);
   let k, a, b, terms, kLabel, innerTerms, expression;
 
-  if (type === 'number') {
+  if (state.isFirstProblem.common) {
+    // Easy first problem: 6x + 9 = 3(2x + 3)
+    k = 3; a = 2; b = 3;
+    terms = [
+      { coef: 6, varPart: 'x', display: '6x' },
+      { coef: 9, varPart: '', display: '9' }
+    ];
+    kLabel = '3';
+    innerTerms = ['2x', '3'];
+    expression = '6x + 9';
+  } else if (type === 'number') {
     k = pick([2, 3, 4, 5, 6]);
     a = pick([1, 2, 3]);
     b = pick([1, 2, 3, 4, 5].filter(x => gcd(x, a) === 1 || a === 1));
-    // k(ax + b) = kax + kb
     terms = [
       { coef: k * a, varPart: 'x', display: formatTerm(k * a, 'x') },
       { coef: k * b, varPart: '', display: String(k * b) }
@@ -1401,7 +1927,6 @@ function newCommonProblem() {
     k = pick([2, 3, 4, 5]);
     a = pick([1, 2, 3]);
     b = pick([1, 2, 3, 4, 5]);
-    // kx(ax + b) = kax² + kbx
     terms = [
       { coef: k * a, varPart: 'x\u00B2', display: formatTerm(k * a, 'x\u00B2') },
       { coef: k * b, varPart: 'x', display: formatTerm(k * b, 'x') }
@@ -1411,11 +1936,9 @@ function newCommonProblem() {
     expression = formatTerm(k * a, 'x\u00B2') + ' + ' + formatTerm(k * b, 'x');
   }
 
-  // Build factor options (correct + distractors)
   const options = new Set();
   options.add(kLabel);
-  // Add distractors
-  if (type === 'number') {
+  if (type === 'number' || state.isFirstProblem.common) {
     options.add(String(k + 1));
     options.add(String(Math.max(1, k - 1)));
     if (k !== 2) options.add('2');
@@ -1432,12 +1955,14 @@ function newCommonProblem() {
   const factorOptions = shuffle([...options].slice(0, 6));
 
   state.common = {
-    k, kLabel, type, terms, innerTerms, expression,
+    k, kLabel, type: state.isFirstProblem.common ? 'number' : type,
+    terms, innerTerms, expression,
     selectedFactor: null, solved: false, factorOptions,
     answer: kLabel + '(' + innerTerms.join(' + ') + ')'
   };
 
   $('common-expr').textContent = expression;
+  $('common-instruction').innerHTML = '共通因数を1つ選んで「これでくくる！」を押そう';
   $('common-result').className = 'result-display';
   $('common-result').textContent = '';
   $('common-feedback').className = 'feedback-area';
@@ -1448,6 +1973,11 @@ function newCommonProblem() {
 
   renderCommonTerms(false);
   renderCommonFactors();
+
+  // Hints for first problem
+  if (state.isFirstProblem.common) {
+    addPulseHint('.factor-btn', 800);
+  }
 }
 
 function gcd(a, b) {
@@ -1491,29 +2021,36 @@ function renderCommonFactors() {
 
 function selectFactor(f) {
   if (state.common.solved) return;
+  clearAllHints();
   state.common.selectedFactor = f;
   renderCommonFactors();
 
-  // Show preview
-  const { kLabel, innerTerms } = state.common;
   $('common-preview').textContent = f + '( ? )';
   $('common-preview').className = 'factor-preview show';
   $('common-confirm-btn').classList.remove('hidden');
+
+  // Pulse the confirm button
+  setTimeout(() => {
+    $('common-confirm-btn').classList.add('hint-pulse');
+  }, 300);
+
+  $('common-instruction').innerHTML = '👇「これでくくる！」を押して確定しよう';
 }
 
 $('common-confirm-btn').addEventListener('click', () => {
   const { selectedFactor, kLabel, innerTerms, terms, type, k } = state.common;
   if (!selectedFactor || state.common.solved) return;
 
+  $('common-confirm-btn').classList.remove('hint-pulse');
+
   if (selectedFactor === kLabel) {
-    // Correct!
     state.common.solved = true;
     state.correct++;
     state.total++;
     state.streak++;
+    state.isFirstProblem.common = false;
     updateStats();
 
-    // Animate
     document.querySelectorAll('.factor-btn').forEach(b => {
       if (b.textContent === kLabel) {
         b.classList.add('correct-factor');
@@ -1528,14 +2065,17 @@ $('common-confirm-btn').addEventListener('click', () => {
     $('common-preview').textContent = answer;
     $('common-preview').className = 'factor-preview show';
     $('common-feedback').className = 'feedback-area correct';
-    $('common-feedback').textContent = '正解！ 共通因数をくくり出せた！';
+    $('common-feedback').innerHTML = '🎉 正解！ 共通因数をくくり出せた！<div class="success-next"><span class="arrow-bounce">→</span> 「次の問題」で続けよう</div>';
     $('common-confirm-btn').classList.add('hidden');
     $('common-next-btn').classList.remove('hidden');
+
+    setTimeout(() => {
+      $('common-next-btn').classList.add('hint-pulse');
+    }, 800);
 
     showConfetti();
     showStreakPopup();
   } else {
-    // Wrong
     state.total++;
     state.streak = 0;
     updateStats();
@@ -1546,37 +2086,40 @@ $('common-confirm-btn').addEventListener('click', () => {
       setTimeout(() => b.classList.remove('wrong-factor'), 600);
     });
 
-    // Explain why wrong
     let reason = '';
     const sf = selectedFactor;
 
-    // Check if the factor divides all terms
     if (type === 'number') {
       const c1 = terms[0].coef;
       const c2 = terms[1].coef;
       const fNum = parseInt(sf);
       if (!isNaN(fNum)) {
         if (c1 % fNum !== 0 || c2 % fNum !== 0) {
-          const bad = c1 % fNum !== 0 ? terms[0].display : terms[1].display;
-          reason = `${bad} は ${sf} で割り切れないよ`;
+          const badTerm = c1 % fNum !== 0 ? terms[0].display : terms[1].display;
+          reason = `❌ ${badTerm} は ${sf} で割り切れないよ<br>💡 ${c1} と ${c2} の両方を割り切れる数は？`;
         } else {
-          reason = `${sf} でくくれるけど、もっと大きい共通因数があるよ！`;
+          reason = `⚠️ ${sf} でもくくれるけど、もっと大きい共通因数があるよ！<br>💡 ${c1} と ${c2} の最大公約数を探してみよう`;
         }
-      } else {
-        reason = `この式の項には x が含まれない項もあるから、x ではくくれないよ`;
+      } else if (sf.includes('x')) {
+        reason = `❌ 定数の項 ${terms[1].display} には x が含まれないから、x ではくくれないよ<br>💡 数字だけの共通因数を探そう`;
       }
     } else {
       if (sf === String(k)) {
-        reason = `${sf} でもくくれるけど、x も共通因数だよ！ ${kLabel} でくくろう`;
+        reason = `⚠️ ${sf} でもくくれるけど、x も共通因数だよ！<br>💡 ${kLabel} でくくってみよう`;
       } else if (sf === 'x') {
-        reason = `x は共通因数だけど、係数にも共通因数 ${k} があるよ！`;
+        reason = `⚠️ x は共通因数だけど、係数 ${k} も共通因数だよ！<br>💡 数字と x をまとめて ${kLabel} でくくろう`;
       } else {
-        reason = `すべての項を ${sf} で割り切れるか確認してみよう`;
+        const fNum = parseInt(sf);
+        if (!isNaN(fNum) && sf.includes('x')) {
+          reason = `❌ すべての項を ${sf} で割り切れるか確認してみよう<br>💡 各項の係数と文字の両方をチェック！`;
+        } else {
+          reason = `❌ すべての項を ${sf} で割り切れるか確認してみよう<br>💡 各項を ${sf} で割ってみて！`;
+        }
       }
     }
 
     $('common-feedback').className = 'feedback-area wrong';
-    $('common-feedback').textContent = reason;
+    $('common-feedback').innerHTML = reason;
 
     state.common.selectedFactor = null;
     renderCommonFactors();
@@ -1585,7 +2128,10 @@ $('common-confirm-btn').addEventListener('click', () => {
   }
 });
 
-$('common-next-btn').addEventListener('click', newCommonProblem);
+$('common-next-btn').addEventListener('click', () => {
+  $('common-next-btn').classList.remove('hint-pulse');
+  newCommonProblem();
+});
 
 // ========== Event Listeners ==========
 
@@ -1598,6 +2144,12 @@ document.querySelectorAll('.mode-card').forEach(card => {
 document.querySelectorAll('.mode-tab').forEach(tab => {
   tab.addEventListener('click', () => startMode(tab.dataset.mode));
 });
+
+// ========== Init ==========
+// Show tutorial on first visit
+if (!isTutorialDone()) {
+  showTutorial();
+}
 
 </script>
 </body>
